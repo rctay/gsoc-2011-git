@@ -1,0 +1,30 @@
+$ time ~/bin/jgit.sh log -M -p v1.5.0 >/dev/null
+0m12.358s
+0m12.274s
+0m12.262s
+
+$ time ../git/git log -M -p v1.5.0 >/dev/null
+0m6.860s
+0m6.963s
+0m6.879s
+
+$ time ../git/git log --histogram -M -p v1.5.0 >/dev/null
+raw-v3
+0m7.541s
+0m7.577s
+0m7.654s
+
+ptr-v2
+0m7.633s
+0m7.608s
+0m7.556s
+
+xd-v1
+0m7.897s
+0m7.910s
+0m7.902s
+
+$ time ../git/git log --patience -M -p v1.5.0 >/dev/null
+0m8.165s
+0m8.105s
+0m8.126s
