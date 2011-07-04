@@ -1,0 +1,27 @@
+jgit repo
+
+$ time jgit.sh log -M -p v0.99 >/dev/null
+0m3.873s
+0m3.801s
+0m3.919s
+
+$ time ../git/git log -M -p >/dev/null
+0m3.032s
+0m2.940s
+0m2.940s
+
+$ time ../git/git log --histogram -M -p >/dev/null
+raw-v3
+0m3.162s
+0m3.088s
+0m3.196s
+
+ptr-v1
+0m3.356s
+0m3.360s
+0m3.375s
+
+xd-v1
+0m3.225s
+0m3.196s
+0m3.194s
