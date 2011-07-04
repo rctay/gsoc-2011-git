@@ -24,6 +24,11 @@ xd-v1
 0m7.910s
 0m7.902s
 
+xd-v2
+0m8.029s
+0m7.917s
+0m7.842s
+
 $ time ../git/git log --patience -M -p v1.5.0 >/dev/null
 0m8.165s
 0m8.105s
