@@ -1,0 +1,55 @@
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index 5c18d2a..0eebd83 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -65,11 +65,39 @@ static int cmp_env(xpparam_t const *xpp, xdfenv_t *env,
+ #define cmp(i, s1, l1, s2, l2) \
+ 	(cmp_env(i->xpp, i->env, s1, l1, s2, l2))
+ 
+-static unsigned int table_hash(struct histindex *index, int side, int line)
++/*
++ * From http://en.wikipedia.org/wiki/Binary_logarithm#Integer
++ */
++static int int_log2(unsigned int n)
+ {
+-	return XDL_HASHLONG((get_rec(index->env, side, line))->ha, index->table_bits);
++	int pos;
++
++	if (n == 0)
++		return -1;
++
++
++	pos = 0;
++	if (n >= (1 <<16)) { n >>= 16; pos += 16; }
++	if (n >= (1 << 8)) { n >>=  8; pos +=  8; }
++	if (n >= (1 << 4)) { n >>=  4; pos +=  4; }
++	if (n >= (1 << 2)) { n >>=  2; pos +=  2; }
++	if (n >= (1 << 1)) {           pos +=  1; }
++	return pos;
+ }
+ 
++static int table_bits(unsigned int size)
++{
++	int bits = int_log2(size);
++	if (bits == 0)
++		bits = 1;
++	if (1 << bits < size)
++		bits++;
++	return bits;
++}
++
++#define table_hash(index, side, line) \
++	(((unsigned int) ((get_rec(index->env, side, line))->ha * 0x9e370001UL)) >> (32-index->table_bits))
++
+ static int scanA(struct histindex *index, int line1, int count1)
+ {
+ 	unsigned int ptr, rec_idx, tbl_idx;
+@@ -267,7 +295,7 @@ static int histogram_diff(xpparam_t const *xpp, xdfenv_t *env,
+ 	index.env = env;
+ 	index.xpp = xpp;
+ 
+-	index.table_bits = xdl_hashbits(count1);
++	index.table_bits = table_bits(count1);
+ 	sz = index.table_size = 1 << index.table_bits;
+ 	sz *= sizeof(int);
+ 	if (!(index.table = xdl_malloc(sz)))
