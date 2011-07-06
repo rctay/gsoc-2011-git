@@ -4,30 +4,30 @@ $ time ~/bin/jgit.sh log -M -p v1.5.0 >/dev/null
 0m12.734s
 
 $ time ../git/git log -M -p v1.5.0 >/dev/null
-0m7.069s
-0m7.129s
-0m7.028s
+0m7.108s
+0m7.105s
+0m7.165s
 
 $ time ../git/git log --histogram -M -p v1.5.0 >/dev/null
-raw-v3
-0m7.822s
-0m7.711s
-0m7.749s
-
 raw-v4
-0m7.736s
-0m7.776s
-0m7.744s
+0m7.874s
+0m7.883s
+0m7.835s
 
-ptr-v2
-0m7.749s
-0m7.733s
-0m7.734s
+raw 1683281
+0m6.809s
+0m6.776s
+0m6.799s
 
 ptr-v3
-0m7.752s
-0m7.727s
-0m7.697s
+0m7.732s
+0m7.878s
+0m7.888s
+
+ptr d5b2c8f
+0m6.858s
+0m6.874s
+0m6.866s
 
 xd-v1
 0m8.055s
@@ -40,6 +40,6 @@ xd-v2
 0m8.084s
 
 $ time ../git/git log --patience -M -p v1.5.0 >/dev/null
-0m8.228s
-0m8.223s
-0m8.295s
+0m8.428s
+0m8.403s
+0m8.431s
