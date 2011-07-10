@@ -1,0 +1,41 @@
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index acb43d1..0bca160 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -14,6 +14,7 @@ struct histindex {
+ 		struct record *next;
+ 	} **records, /* an ocurrence */
+ 	  **line_map; /* map of line to record chain */
++	chastore_t rcha;
+ 	unsigned int *next_ptrs;
+ 	unsigned int table_bits,
+ 		     records_size,
+@@ -92,8 +93,7 @@ static int scanA(struct histindex *index, int line1, int count1)
+ 			return -1;
+ 
+ 		/* first occurrence, create occurrence chain */
+-		if (!(rec = (struct record *)
+-			xdl_malloc(sizeof(struct record))))
++		if (!(rec = xdl_cha_alloc(&index->rcha)))
+ 			return -1;
+ 		rec->ptr = ptr;
+ 		rec->cnt = 1;
+@@ -274,6 +274,10 @@ static int histogram_diff(xpparam_t const *xpp, xdfenv_t *env,
+ 		goto cleanup;
+ 	memset(index.next_ptrs, 0, sz);
+ 
++	index.rcha.head = NULL;
++	if (!xdl_cha_init(&index.rcha, sizeof(struct record), count1 / 4 + 1))
++		goto cleanup;
++
+ 	index.ptr_shift = line1;
+ 	index.max_chain_length = 64;
+ 
+@@ -303,6 +307,7 @@ cleanup:
+ 	xdl_free(index.records);
+ 	xdl_free(index.line_map);
+ 	xdl_free(index.next_ptrs);
++	xdl_cha_free(&index.rcha);
+ 
+ 	return result;
+ }
