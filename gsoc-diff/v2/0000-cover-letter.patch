@@ -1,0 +1,23 @@
+From 65d315e92a04ba756e83eddd9c86ba70f1f0f33c Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Thu, 7 Jul 2011 00:33:52 +0800
+Subject: [PATCH v2 0/4] prepare for histogram diff
+
+Tay Ray Chuan (4):
+  xdiff/xprepare: use memset()
+  xdiff/xprepare: refactor abort cleanups
+  xdiff/xpatience: factor out fall-back-diff function
+  t4033-diff-patience: factor out tests
+
+ t/lib-diff-patience.sh   |  163 ++++++++++++++++++++++++++++++++++++++++++++++
+ t/t4033-diff-patience.sh |  162 +--------------------------------------------
+ xdiff/xpatience.c        |   27 +-------
+ xdiff/xprepare.c         |  104 +++++++++++-------------------
+ xdiff/xutils.c           |   31 +++++++++
+ xdiff/xutils.h           |    2 +
+ 6 files changed, 238 insertions(+), 251 deletions(-)
+ create mode 100644 t/lib-diff-patience.sh
+
+-- 
+1.7.3.4.721.g4666.dirty
+
