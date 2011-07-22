@@ -1,0 +1,34 @@
+diff --git a/xdiff-interface.c b/xdiff-interface.c
+index e1e054e..74a8571 100644
+--- a/xdiff-interface.c
++++ b/xdiff-interface.c
+@@ -108,10 +108,9 @@ static void trim_common_tail(mmfile_t *a, mmfile_t *b, long ctx)
+ 	long trimmed = 0, recovered = 0;
+ 	char *ap = a->ptr + a->size;
+ 	char *bp = b->ptr + b->size;
++	char *atop = ap, *prev;
+ 	long smaller = (a->size < b->size) ? a->size : b->size;
+-
+-	if (ctx)
+-		return;
++	long lines = 0;
+ 
+ 	while (blk + trimmed <= smaller && !memcmp(ap - blk, bp - blk, blk)) {
+ 		trimmed += blk;
+@@ -124,6 +123,16 @@ static void trim_common_tail(mmfile_t *a, mmfile_t *b, long ctx)
+ 			break;
+ 	a->size -= trimmed - recovered;
+ 	b->size -= trimmed - recovered;
++
++	ap -= recovered;
++	prev = ap;
++	while (lines < ctx && ap < atop && (ap = memchr(ap, '\n', atop - ap))) {
++		lines++;
++		++ap;
++		a->size += ap - prev;
++		b->size += ap - prev;
++		prev = ap;
++	}
+ }
+ 
+ int xdi_diff(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp, xdemitconf_t const *xecfg, xdemitcb_t *xecb)
