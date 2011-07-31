@@ -95,10 +95,10 @@ index ad033a8..7a92ea9 100644
  #endif /* #if !defined(XDIFFI_H) */
 diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
 new file mode 100644
-index 0000000..d92c688
+index 0000000..0e2c5b7
 --- /dev/null
 +++ b/xdiff/xhistogram.c
-@@ -0,0 +1,336 @@
+@@ -0,0 +1,330 @@
 +#include "xinclude.h"
 +#include "xtypes.h"
 +#include "xdiff.h"
@@ -191,15 +191,11 @@ index 0000000..d92c688
 +				new_rec->next = rec;
 +				rec->previous = new_rec;
 +				*rec_chain = new_rec;
-+/* 				index->recs[rec_idx] = REC_CREATE(REC_NEXT(rec), ptr, new_cnt);  */
 +				INDEX_NEXT(index, ptr).ptr = rec->ptr;
 +				INDEX_NEXT(index, ptr).rec = new_rec;
-+/* 				INDEX_NEXT(index, ptr) = rec->ptr;  */
-+/* 				INDEX_REC_IDXS(index, ptr) = rec;  */
 +				goto continue_scan;
 +			}
 +
-+/* 			rec_idx = REC_NEXT(rec);  */
 +			rec = rec->next;
 +			chain_len++;
 +		}
@@ -217,8 +213,6 @@ index 0000000..d92c688
 +		INDEX_NEXT(index, ptr).ptr = 0;
 +		INDEX_NEXT(index, ptr).rec = new_rec;
 +		*rec_chain = new_rec;
-+/* 		INDEX_REC_IDXS(index, ptr) = rec;  */
-+/* 		index->records[tbl_idx] = rec_idx;  */
 +
 +continue_scan:
 +		; /* no op */
