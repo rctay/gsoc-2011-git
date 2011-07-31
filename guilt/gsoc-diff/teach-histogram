@@ -108,7 +108,7 @@ index ad033a8..7a92ea9 100644
  #endif /* #if !defined(XDIFFI_H) */
 diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
 new file mode 100644
-index 0000000..a5b5159
+index 0000000..8fe34f4
 --- /dev/null
 +++ b/xdiff/xhistogram.c
 @@ -0,0 +1,332 @@
@@ -116,11 +116,11 @@ index 0000000..a5b5159
 +#include "xtypes.h"
 +#include "xdiff.h"
 +
-+#define MAX_PTR	((1<<15)-1)
-+#define MAX_CNT	((1<<15)-1)
++#define MAX_PTR	((1 << 15) - 1)
++#define MAX_CNT	((1 << 15) - 1)
 +
-+#define LINE_END(n) (line##n+count##n-1)
-+#define LINE_END_PTR(n) (*line##n+*count##n-1)
++#define LINE_END(n) (line##n + count##n - 1)
++#define LINE_END_PTR(n) (*line##n + *count##n - 1)
 +
 +struct histindex {
 +	struct record {
@@ -159,7 +159,7 @@ index 0000000..a5b5159
 +	((LINE_MAP(index, ptr))->cnt)
 +
 +#define REC(env, s, l) \
-+	(env->xdf##s.recs[l-1])
++	(env->xdf##s.recs[l - 1])
 +
 +static int cmp_recs(xpparam_t const *xpp,
 +	xrecord_t *r1, xrecord_t *r2)
@@ -251,14 +251,14 @@ index 0000000..a5b5159
 +			rc = rec->cnt;
 +
 +			while (line1 < as && line2 < bs
-+				&& CMP(index, 1, as-1, 2, bs-1)) {
++				&& CMP(index, 1, as - 1, 2, bs - 1)) {
 +				as--;
 +				bs--;
 +				if (1 < rc)
 +					rc = XDL_MIN(rc, CNT(index, as));
 +			}
 +			while (ae < LINE_END(1) && be < LINE_END(2)
-+				&& CMP(index, 1, ae+1, 2, be+1)) {
++				&& CMP(index, 1, ae + 1, 2, be + 1)) {
 +				ae++;
 +				be++;
 +				if (1 < rc)
