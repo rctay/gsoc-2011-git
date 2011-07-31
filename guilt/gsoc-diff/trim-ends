@@ -1,5 +1,5 @@
 diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
-index 3ebad0f..e2bf4cf 100644
+index 3ebad0f..c273690 100644
 --- a/xdiff/xprepare.c
 +++ b/xdiff/xprepare.c
 @@ -26,6 +26,7 @@
@@ -37,7 +37,7 @@ index 3ebad0f..e2bf4cf 100644
  			break;
  
  	if (!rcrec) {
-@@ -130,8 +132,109 @@ static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned
+@@ -130,8 +132,112 @@ static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned
  }
  
  
@@ -122,7 +122,7 @@ index 3ebad0f..e2bf4cf 100644
 +
 +
 +static void xdl_set_dend(xdfile_t *xdf, xpparam_t const *xpp,
-+			 long lim, long ntail)
++			 xdlclassifier_t *cf, long lim, long ntail)
 +{
 +	long i, ha;
 +	xrecord_t *rec;
@@ -136,6 +136,9 @@ index 3ebad0f..e2bf4cf 100644
 +		old_ptr = rec->ptr;
 +		rec->ha = xdl_hash_record(&rec->ptr, rec->ptr + rec->size, xpp->flags);
 +		rec->ptr = old_ptr;
++
++		xdl_classify_record(cf, xdf->rhash, xdf->hbits, rec);
++
 +		i++;
 +	}
 +}
@@ -148,7 +151,7 @@ index 3ebad0f..e2bf4cf 100644
  	unsigned int hbits;
  	long nrec, hsize, bsize;
  	unsigned long hav;
-@@ -161,10 +264,23 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+@@ -161,10 +267,23 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
  	memset(rhash, 0, hsize * sizeof(xrecord_t *));
  
  	nrec = 0;
@@ -173,7 +176,16 @@ index 3ebad0f..e2bf4cf 100644
  			if (nrec >= narec) {
  				narec *= 2;
  				if (!(rrecs = (xrecord_t **) xdl_realloc(recs, narec * sizeof(xrecord_t *))))
-@@ -200,8 +316,6 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+@@ -178,7 +297,7 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+ 			crec->ha = hav;
+ 			recs[nrec++] = crec;
+ 
+-			if (xdl_classify_record(cf, rhash, hbits, crec) < 0)
++			if (!*ntail && xdl_classify_record(cf, rhash, hbits, crec) < 0)
+ 				goto abort;
+ 		}
+ 	}
+@@ -200,8 +319,6 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
  	xdf->rindex = rindex;
  	xdf->nreff = 0;
  	xdf->ha = ha;
@@ -182,7 +194,7 @@ index 3ebad0f..e2bf4cf 100644
  
  	return 0;
  
-@@ -229,7 +343,9 @@ static void xdl_free_ctx(xdfile_t *xdf) {
+@@ -229,7 +346,9 @@ static void xdl_free_ctx(xdfile_t *xdf) {
  
  int xdl_prepare_env(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
  		    xdfenv_t *xe) {
@@ -192,7 +204,7 @@ index 3ebad0f..e2bf4cf 100644
  	xdlclassifier_t cf;
  
  	enl1 = xdl_guess_lines(mf1) + 1;
-@@ -240,18 +356,25 @@ int xdl_prepare_env(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
+@@ -240,18 +359,25 @@ int xdl_prepare_env(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
  		return -1;
  	}
  
@@ -214,13 +226,13 @@ index 3ebad0f..e2bf4cf 100644
  	}
  
 +	lim = XDL_MIN(xe->xdf1.nrec, xe->xdf2.nrec);
-+	xdl_set_dend(&xe->xdf1, xpp, lim, ntail1);
-+	xdl_set_dend(&xe->xdf2, xpp, lim, ntail2);
++	xdl_set_dend(&xe->xdf1, xpp, &cf, lim, ntail1);
++	xdl_set_dend(&xe->xdf2, xpp, &cf, lim, ntail2);
 +
  	xdl_free_classifier(&cf);
  
  	if (!(xpp->flags & XDF_PATIENCE_DIFF) &&
-@@ -403,39 +526,9 @@ static int xdl_cleanup_records(xdfile_t *xdf1, xdfile_t *xdf2) {
+@@ -403,39 +529,9 @@ static int xdl_cleanup_records(xdfile_t *xdf1, xdfile_t *xdf2) {
  }
  
  
