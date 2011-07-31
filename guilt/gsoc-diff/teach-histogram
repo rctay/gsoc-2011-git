@@ -95,7 +95,7 @@ index ad033a8..7a92ea9 100644
  #endif /* #if !defined(XDIFFI_H) */
 diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
 new file mode 100644
-index 0000000..cb3edfb
+index 0000000..a754242
 --- /dev/null
 +++ b/xdiff/xhistogram.c
 @@ -0,0 +1,341 @@
@@ -259,10 +259,10 @@ index 0000000..cb3edfb
 +			}
 +			while (ae < LINE_END(1) && be < LINE_END(2)
 +				&& cmp(index, 1, ae+1, 2, be+1)) {
-+				if (1 < rc)
-+					rc = XDL_MIN(rc, REC_CNT(index->recs[INDEX_REC_IDXS(index, ae)]));
 +				ae++;
 +				be++;
++				if (1 < rc)
++					rc = XDL_MIN(rc, REC_CNT(index->recs[INDEX_REC_IDXS(index, ae)]));
 +			}
 +
 +			if (b_next < be)
