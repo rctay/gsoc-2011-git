@@ -37,6 +37,24 @@ index 16c2dbe..3e8267b 100644
  	else if (!strcmp(s, "ignore-space-change"))
  		o->xdl_opts |= XDF_IGNORE_WHITESPACE_CHANGE;
  	else if (!strcmp(s, "ignore-all-space"))
+diff --git a/t/t4048-diff-histogram.sh b/t/t4048-diff-histogram.sh
+new file mode 100755
+index 0000000..fd3e86a
+--- /dev/null
++++ b/t/t4048-diff-histogram.sh
+@@ -0,0 +1,12 @@
++#!/bin/sh
++
++test_description='histogram diff algorithm'
++
++. ./test-lib.sh
++. "$TEST_DIRECTORY"/lib-diff-alternative.sh
++
++test_diff_frobnitz "histogram"
++
++test_diff_unique "histogram"
++
++test_done
 diff --git a/xdiff/xdiff.h b/xdiff/xdiff.h
 index 6ea1d0e..4beb10c 100644
 --- a/xdiff/xdiff.h
