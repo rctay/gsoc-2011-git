@@ -1,5 +1,5 @@
 diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
-index 3ebad0f..c9d7d2f 100644
+index 3ebad0f..a93acc0 100644
 --- a/xdiff/xprepare.c
 +++ b/xdiff/xprepare.c
 @@ -26,6 +26,7 @@
@@ -89,7 +89,7 @@ index 3ebad0f..c9d7d2f 100644
 +	long blk;
 +	char const *p1 = mf1->ptr + mf1->size;
 +	char const *p2 = mf2->ptr + mf2->size;
-+	char const *cur, *top;
++	char const *cur, *top = p1;
 +
 +	while (XDL_TRIM_BLK + trimmed <= smaller && !memcmp(p1 - XDL_TRIM_BLK, p2 - XDL_TRIM_BLK, XDL_TRIM_BLK)) {
 +		trimmed += XDL_TRIM_BLK;
