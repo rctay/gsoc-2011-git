@@ -95,7 +95,7 @@ index ad033a8..7a92ea9 100644
  #endif /* #if !defined(XDIFFI_H) */
 diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
 new file mode 100644
-index 0000000..55d2b9e
+index 0000000..6fcf71b
 --- /dev/null
 +++ b/xdiff/xhistogram.c
 @@ -0,0 +1,329 @@
@@ -181,7 +181,7 @@ index 0000000..55d2b9e
 +					xdl_malloc(sizeof(struct record))))
 +					return -1;
 +				new_rec->ptr = ptr;
-+				new_cnt = rec->ptr + 1;
++				new_cnt = rec->cnt + 1;
 +				if (new_cnt > MAX_CNT)
 +					new_cnt = MAX_CNT;
 +				new_rec->cnt = new_cnt;
