@@ -108,7 +108,7 @@ index ad033a8..7a92ea9 100644
  #endif /* #if !defined(XDIFFI_H) */
 diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
 new file mode 100644
-index 0000000..8fe34f4
+index 0000000..e1b8180
 --- /dev/null
 +++ b/xdiff/xhistogram.c
 @@ -0,0 +1,332 @@
@@ -116,8 +116,8 @@ index 0000000..8fe34f4
 +#include "xtypes.h"
 +#include "xdiff.h"
 +
-+#define MAX_PTR	((1 << 15) - 1)
-+#define MAX_CNT	((1 << 15) - 1)
++#define MAX_PTR	UINT_MAX
++#define MAX_CNT	UINT_MAX
 +
 +#define LINE_END(n) (line##n + count##n - 1)
 +#define LINE_END_PTR(n) (*line##n + *count##n - 1)
