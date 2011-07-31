@@ -95,10 +95,10 @@ index ad033a8..7a92ea9 100644
  #endif /* #if !defined(XDIFFI_H) */
 diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
 new file mode 100644
-index 0000000..985da66
+index 0000000..589dc05
 --- /dev/null
 +++ b/xdiff/xhistogram.c
-@@ -0,0 +1,346 @@
+@@ -0,0 +1,347 @@
 +#include "xinclude.h"
 +#include "xtypes.h"
 +#include "xdiff.h"
@@ -158,7 +158,8 @@ index 0000000..985da66
 +{
 +	xrecord_t *r1 = get_rec(env, side1, line1),
 +		  *r2 = get_rec(env, side2, line2);
-+	return xdl_recmatch(r1->ptr, r1->size, r2->ptr, r2->size,
++	return r1->ha == r2->ha &&
++		xdl_recmatch(r1->ptr, r1->size, r2->ptr, r2->size,
 +			    xpp->flags);
 +}
 +
