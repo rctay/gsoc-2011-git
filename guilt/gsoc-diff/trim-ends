@@ -1,5 +1,5 @@
 diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
-index 3ebad0f..d110b4f 100644
+index 3ebad0f..0166a10 100644
 --- a/xdiff/xprepare.c
 +++ b/xdiff/xprepare.c
 @@ -26,6 +26,7 @@
@@ -183,7 +183,8 @@ index 3ebad0f..d110b4f 100644
  	nrec = 0;
 +	xdf->dstart = *ntail = 0;
  	if ((cur = blk = xdl_mmfile_first(mf, &bsize)) != NULL) {
- 		for (top = blk + bsize; cur < top; ) {
+-		for (top = blk + bsize; cur < top; ) {
++		for (top = blk + bsize; cur && cur < top; ) {
  			prev = cur;
 -			hav = xdl_hash_record(&cur, top, xpp->flags);
 +			if (cur < xdf->rstart) {
