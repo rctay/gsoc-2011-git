@@ -95,10 +95,10 @@ index ad033a8..7a92ea9 100644
  #endif /* #if !defined(XDIFFI_H) */
 diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
 new file mode 100644
-index 0000000..0e2c5b7
+index 0000000..55d2b9e
 --- /dev/null
 +++ b/xdiff/xhistogram.c
-@@ -0,0 +1,330 @@
+@@ -0,0 +1,329 @@
 +#include "xinclude.h"
 +#include "xtypes.h"
 +#include "xdiff.h"
@@ -127,8 +127,7 @@ index 0000000..0e2c5b7
 +		     key_shift,
 +		     ptr_shift;
 +
-+	unsigned int recs_count,
-+		     cnt,
++	unsigned int cnt,
 +		     has_common;
 +
 +	xdfenv_t *env;
