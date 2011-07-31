@@ -1,5 +1,5 @@
 diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
-index 3ebad0f..43a5025 100644
+index 3ebad0f..7d5c411 100644
 --- a/xdiff/xprepare.c
 +++ b/xdiff/xprepare.c
 @@ -26,6 +26,7 @@
@@ -10,7 +10,7 @@ index 3ebad0f..43a5025 100644
  
  
  typedef struct s_xdlclass {
-@@ -53,7 +54,7 @@ static void xdl_free_classifier(xdlclassifier_t *cf);
+@@ -53,11 +54,10 @@ static void xdl_free_classifier(xdlclassifier_t *cf);
  static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned int hbits,
  			       xrecord_t *rec);
  static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
@@ -19,7 +19,11 @@ index 3ebad0f..43a5025 100644
  static void xdl_free_ctx(xdfile_t *xdf);
  static int xdl_clean_mmatch(char const *dis, long i, long s, long e);
  static int xdl_cleanup_records(xdfile_t *xdf1, xdfile_t *xdf2);
-@@ -102,9 +103,10 @@ static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned
+-static int xdl_trim_ends(xdfile_t *xdf1, xdfile_t *xdf2);
+ static int xdl_optimize_ctxs(xdfile_t *xdf1, xdfile_t *xdf2);
+ 
+ 
+@@ -102,9 +102,10 @@ static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned
  	line = rec->ptr;
  	hi = (long) XDL_HASHLONG(rec->ha, cf->hbits);
  	for (rcrec = cf->rchash[hi]; rcrec; rcrec = rcrec->next)
@@ -32,7 +36,7 @@ index 3ebad0f..43a5025 100644
  			break;
  
  	if (!rcrec) {
-@@ -130,8 +132,48 @@ static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned
+@@ -130,10 +131,84 @@ static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned
  }
  
  
@@ -41,6 +45,7 @@ index 3ebad0f..43a5025 100644
 +
 +	long trimmed = 0, recovered = 0;
 +	long smaller = XDL_MIN(mf1->size, mf2->size);
++	long blk;
 +	char const *p1, *p2;
 +	char const *cur, *top;
 +
@@ -73,6 +78,39 @@ index 3ebad0f..43a5025 100644
 +
 +	xdf1->rstart = p1;
 +	xdf2->rstart = p2;
++
++	/* trim tail */
++	p1 = mf1->ptr + mf1->size;
++	p2 = mf2->ptr + mf2->size;
++	trimmed = recovered = 0;
++
++	while (XDL_TRIM_BLK + trimmed <= smaller && !memcmp(p1 - XDL_TRIM_BLK, p2 - XDL_TRIM_BLK, XDL_TRIM_BLK)) {
++		trimmed += XDL_TRIM_BLK;
++		p1 -= XDL_TRIM_BLK;
++		p2 -= XDL_TRIM_BLK;
++	}
++
++	while (recovered < trimmed) {
++		if (p1[recovered] == '\n')
++			break;
++		recovered++;
++	}
++	p1 += recovered;
++	p2 += recovered;
++
++	top = p1 - (smaller - (top - p1));
++	cur = p1;
++
++	while (cur >= top
++		&& (cur = memrchr(top, '\n', cur - top))) {
++		blk = p1 - cur;
++		if (memcmp(p1 - blk, p2 - blk, blk))
++			break;
++		p1 -= blk;
++		p2 -= blk;
++	}
++	xdf1->rend = p1;
++	xdf2->rend = p2;
 +}
 +
 +
@@ -80,17 +118,22 @@ index 3ebad0f..43a5025 100644
 -			   xdlclassifier_t *cf, xdfile_t *xdf) {
 +			   xdlclassifier_t *cf, xdfile_t *xdf, xrecord_t **arec) {
  	unsigned int hbits;
- 	long nrec, hsize, bsize;
+-	long nrec, hsize, bsize;
++	long nrec, ntail, hsize, bsize;
  	unsigned long hav;
-@@ -161,10 +203,19 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+ 	char const *blk, *cur, *top, *prev;
+ 	xrecord_t *crec;
+@@ -161,10 +236,21 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
  	memset(rhash, 0, hsize * sizeof(xrecord_t *));
  
  	nrec = 0;
-+	xdf->dstart = 0;
++	xdf->dstart = ntail = 0;
  	if ((cur = blk = xdl_mmfile_first(mf, &bsize)) != NULL) {
  		for (top = blk + bsize; cur < top; ) {
  			prev = cur;
 -			hav = xdl_hash_record(&cur, top, xpp->flags);
++			if (cur > xdf->rend)
++				ntail++;
 +			if (cur < xdf->rstart) {
 +				if (arec)
 +					cur += (arec++)[0]->size;
@@ -103,15 +146,25 @@ index 3ebad0f..43a5025 100644
  			if (nrec >= narec) {
  				narec *= 2;
  				if (!(rrecs = (xrecord_t **) xdl_realloc(recs, narec * sizeof(xrecord_t *))))
-@@ -200,7 +251,6 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+@@ -200,8 +286,7 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
  	xdf->rindex = rindex;
  	xdf->nreff = 0;
  	xdf->ha = ha;
 -	xdf->dstart = 0;
- 	xdf->dend = nrec - 1;
+-	xdf->dend = nrec - 1;
++	xdf->dend = ntail;
  
  	return 0;
-@@ -240,12 +290,14 @@ int xdl_prepare_env(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
+ 
+@@ -229,6 +314,7 @@ static void xdl_free_ctx(xdfile_t *xdf) {
+ 
+ int xdl_prepare_env(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
+ 		    xdfenv_t *xe) {
++	long lim;
+ 	long enl1, enl2;
+ 	xdlclassifier_t cf;
+ 
+@@ -240,18 +326,24 @@ int xdl_prepare_env(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
  		return -1;
  	}
  
@@ -128,10 +181,27 @@ index 3ebad0f..43a5025 100644
  
  		xdl_free_ctx(&xe->xdf1);
  		xdl_free_classifier(&cf);
-@@ -410,14 +462,8 @@ static int xdl_trim_ends(xdfile_t *xdf1, xdfile_t *xdf2) {
- 	long i, lim;
- 	xrecord_t **recs1, **recs2;
+ 		return -1;
+ 	}
  
++	lim = XDL_MIN(xe->xdf1.nrec, xe->xdf2.nrec);
++	xe->xdf1.dend = xe->xdf1.nrec - XDL_MIN(lim - xe->xdf1.dstart, xe->xdf1.dend) - 1;
++	xe->xdf2.dend = xe->xdf2.nrec - XDL_MIN(lim - xe->xdf2.dstart, xe->xdf2.dend) - 1;
++
+ 	xdl_free_classifier(&cf);
+ 
+ 	if (!(xpp->flags & XDF_PATIENCE_DIFF) &&
+@@ -403,39 +495,9 @@ static int xdl_cleanup_records(xdfile_t *xdf1, xdfile_t *xdf2) {
+ }
+ 
+ 
+-/*
+- * Early trim initial and terminal matching records.
+- */
+-static int xdl_trim_ends(xdfile_t *xdf1, xdfile_t *xdf2) {
+-	long i, lim;
+-	xrecord_t **recs1, **recs2;
+-
 -	recs1 = xdf1->recs;
 -	recs2 = xdf2->recs;
 -	for (i = 0, lim = XDL_MIN(xdf1->nrec, xdf2->nrec); i < lim;
@@ -140,20 +210,37 @@ index 3ebad0f..43a5025 100644
 -			break;
 -
 -	xdf1->dstart = xdf2->dstart = i;
-+	lim = XDL_MIN(xdf1->nrec, xdf2->nrec);
-+	i = XDL_MIN(lim, xdf1->dstart);
+-
+-	recs1 = xdf1->recs + xdf1->nrec - 1;
+-	recs2 = xdf2->recs + xdf2->nrec - 1;
+-	for (lim -= i, i = 0; i < lim; i++, recs1--, recs2--)
+-		if ((*recs1)->ha != (*recs2)->ha)
+-			break;
+-
+-	xdf1->dend = xdf1->nrec - i - 1;
+-	xdf2->dend = xdf2->nrec - i - 1;
+-
+-	return 0;
+-}
+-
+-
+ static int xdl_optimize_ctxs(xdfile_t *xdf1, xdfile_t *xdf2) {
  
- 	recs1 = xdf1->recs + xdf1->nrec - 1;
- 	recs2 = xdf2->recs + xdf2->nrec - 1;
+-	if (xdl_trim_ends(xdf1, xdf2) < 0 ||
+-	    xdl_cleanup_records(xdf1, xdf2) < 0) {
++	if (xdl_cleanup_records(xdf1, xdf2) < 0) {
+ 
+ 		return -1;
+ 	}
 diff --git a/xdiff/xtypes.h b/xdiff/xtypes.h
-index 2511aef..d390ac9 100644
+index 2511aef..6330a9f 100644
 --- a/xdiff/xtypes.h
 +++ b/xdiff/xtypes.h
 @@ -51,6 +51,7 @@ typedef struct s_xdfile {
  	unsigned int hbits;
  	xrecord_t **rhash;
  	long dstart, dend;
-+	const char *rstart;
++	const char *rstart, *rend;
  	xrecord_t **recs;
  	char *rchg;
  	long *rindex;
