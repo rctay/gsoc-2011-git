@@ -1,5 +1,5 @@
 diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
-index 3ebad0f..c273690 100644
+index 3ebad0f..080638e 100644
 --- a/xdiff/xprepare.c
 +++ b/xdiff/xprepare.c
 @@ -26,6 +26,7 @@
@@ -24,9 +24,21 @@ index 3ebad0f..c273690 100644
  static int xdl_optimize_ctxs(xdfile_t *xdf1, xdfile_t *xdf2);
  
  
-@@ -102,9 +103,10 @@ static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned
+@@ -67,7 +68,7 @@ static int xdl_init_classifier(xdlclassifier_t *cf, long size, long flags) {
+ 	cf->flags = flags;
+ 
+ 	cf->hbits = xdl_hashbits((unsigned int) size);
+-	cf->hsize = 1 << cf->hbits;
++	cf->hsize = 1L + (1 << cf->hbits);
+ 
+ 	if (xdl_cha_init(&cf->ncha, sizeof(xdlclass_t), size / 4 + 1) < 0) {
+ 
+@@ -100,11 +101,12 @@ static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned
+ 	xdlclass_t *rcrec;
+ 
  	line = rec->ptr;
- 	hi = (long) XDL_HASHLONG(rec->ha, cf->hbits);
+-	hi = (long) XDL_HASHLONG(rec->ha, cf->hbits);
++	hi = rec->ha == 0 ? 0 : 1L + (long) XDL_HASHLONG(rec->ha, cf->hbits);
  	for (rcrec = cf->rchash[hi]; rcrec; rcrec = rcrec->next)
 -		if (rcrec->ha == rec->ha &&
 +		if (rec->ha == 0 ||
@@ -37,6 +49,15 @@ index 3ebad0f..c273690 100644
  			break;
  
  	if (!rcrec) {
+@@ -122,7 +124,7 @@ static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned
+ 
+ 	rec->ha = (unsigned long) rcrec->idx;
+ 
+-	hi = (long) XDL_HASHLONG(rec->ha, hbits);
++	hi = rec->ha == 0 ? 0 : 1L + (long) XDL_HASHLONG(rec->ha, hbits);
+ 	rec->next = rhash[hi];
+ 	rhash[hi] = rec;
+ 
 @@ -130,8 +132,112 @@ static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned
  }
  
@@ -151,7 +172,14 @@ index 3ebad0f..c273690 100644
  	unsigned int hbits;
  	long nrec, hsize, bsize;
  	unsigned long hav;
-@@ -161,10 +267,23 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+@@ -155,16 +261,29 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+ 		goto abort;
+ 
+ 	hbits = xdl_hashbits((unsigned int) narec);
+-	hsize = 1 << hbits;
++	hsize = 1L + (1 << hbits);
+ 	if (!(rhash = (xrecord_t **) xdl_malloc(hsize * sizeof(xrecord_t *))))
+ 		goto abort;
  	memset(rhash, 0, hsize * sizeof(xrecord_t *));
  
  	nrec = 0;
@@ -232,6 +260,24 @@ index 3ebad0f..c273690 100644
  	xdl_free_classifier(&cf);
  
  	if (!(xpp->flags & XDF_PATIENCE_DIFF) &&
+@@ -355,7 +481,7 @@ static int xdl_cleanup_records(xdfile_t *xdf1, xdfile_t *xdf2) {
+ 		mlim = XDL_MAX_EQLIMIT;
+ 	for (i = xdf1->dstart, recs = &xdf1->recs[xdf1->dstart]; i <= xdf1->dend; i++, recs++) {
+ 		hav = (*recs)->ha;
+-		rhi = (long) XDL_HASHLONG(hav, xdf2->hbits);
++		rhi = hav == 0 ? 0 : 1L + ((long) XDL_HASHLONG(hav, xdf2->hbits));
+ 		for (nm = 0, rec = xdf2->rhash[rhi]; rec; rec = rec->next)
+ 			if (rec->ha == hav && ++nm == mlim)
+ 				break;
+@@ -366,7 +492,7 @@ static int xdl_cleanup_records(xdfile_t *xdf1, xdfile_t *xdf2) {
+ 		mlim = XDL_MAX_EQLIMIT;
+ 	for (i = xdf2->dstart, recs = &xdf2->recs[xdf2->dstart]; i <= xdf2->dend; i++, recs++) {
+ 		hav = (*recs)->ha;
+-		rhi = (long) XDL_HASHLONG(hav, xdf1->hbits);
++		rhi = hav == 0 ? 0 : 1L + (long) XDL_HASHLONG(hav, xdf1->hbits);
+ 		for (nm = 0, rec = xdf1->rhash[rhi]; rec; rec = rec->next)
+ 			if (rec->ha == hav && ++nm == mlim)
+ 				break;
 @@ -403,39 +529,9 @@ static int xdl_cleanup_records(xdfile_t *xdf1, xdfile_t *xdf2) {
  }
  
