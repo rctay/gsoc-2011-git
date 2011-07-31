@@ -108,10 +108,10 @@ index ad033a8..7a92ea9 100644
  #endif /* #if !defined(XDIFFI_H) */
 diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
 new file mode 100644
-index 0000000..e1b8180
+index 0000000..3edbba1
 --- /dev/null
 +++ b/xdiff/xhistogram.c
-@@ -0,0 +1,332 @@
+@@ -0,0 +1,340 @@
 +#include "xinclude.h"
 +#include "xtypes.h"
 +#include "xdiff.h"
@@ -192,6 +192,11 @@ index 0000000..e1b8180
 +		chain_len = 0;
 +		while (rec) {
 +			if (CMP(index, 1, rec->ptr, 1, ptr)) {
++				/*
++				 * ptr is identical to another element. Insert
++				 * it onto the front of the existing element
++				 * chain.
++				 */
 +				NEXT_PTR(index, ptr) = rec->ptr;
 +				rec->ptr = ptr;
 +				rec->cnt = XDL_MIN(MAX_CNT, rec->cnt + 1);
@@ -206,7 +211,10 @@ index 0000000..e1b8180
 +		if (chain_len == index->max_chain_length)
 +			return -1;
 +
-+		/* first occurrence, create occurrence chain */
++		/*
++		 * This is the first time we have ever seen this particular
++		 * element in the sequence. Construct a new chain for it.
++		 */
 +		if (!(rec = xdl_cha_alloc(&index->rcha)))
 +			return -1;
 +		rec->ptr = ptr;
