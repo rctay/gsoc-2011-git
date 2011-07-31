@@ -1,5 +1,5 @@
 diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
-index 3ebad0f..bc6447a 100644
+index 3ebad0f..46215f1 100644
 --- a/xdiff/xprepare.c
 +++ b/xdiff/xprepare.c
 @@ -57,7 +57,8 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
@@ -74,6 +74,15 @@ index 3ebad0f..bc6447a 100644
  			if (nrec >= narec) {
  				narec *= 2;
  				if (!(rrecs = (xrecord_t **) xdl_realloc(recs, narec * sizeof(xrecord_t *))))
+@@ -178,7 +225,7 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+ 			crec->ha = hav;
+ 			recs[nrec++] = crec;
+ 
+-			if (xdl_classify_record(cf, rhash, hbits, crec) < 0)
++			if (nrec > xdf->dstart && xdl_classify_record(cf, rhash, hbits, crec) < 0)
+ 				goto abort;
+ 		}
+ 	}
 @@ -200,7 +247,6 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
  	xdf->rindex = rindex;
  	xdf->nreff = 0;
