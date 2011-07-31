@@ -95,10 +95,10 @@ index ad033a8..7a92ea9 100644
  #endif /* #if !defined(XDIFFI_H) */
 diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
 new file mode 100644
-index 0000000..04f5c1e
+index 0000000..915b080
 --- /dev/null
 +++ b/xdiff/xhistogram.c
-@@ -0,0 +1,338 @@
+@@ -0,0 +1,335 @@
 +#include "xinclude.h"
 +#include "xtypes.h"
 +#include "xdiff.h"
@@ -110,17 +110,14 @@ index 0000000..04f5c1e
 +#define LINE_END_PTR(n) (*line##n+*count##n-1)
 +
 +struct histindex {
-+	/* an ocurrence */
 +	struct record {
 +		unsigned int ptr, cnt;
 +		struct record *next, *previous;
-+	} **records;
-+	unsigned int table_bits, records_size;
-+
-+	struct record_next {
-+		struct record *rec;
-+	} *records_next;
-+	unsigned int records_next_size;
++	} **records, /* an ocurrence */
++	  **line_map; /* map of line to record chain */
++	unsigned int table_bits,
++		     records_size,
++		     line_map_size;
 +
 +	unsigned int max_chain_length,
 +		     key_shift,
@@ -138,7 +135,7 @@ index 0000000..04f5c1e
 +	unsigned int begin2, end2;
 +};
 +
-+#define INDEX_NEXT(i, a) (i->records_next[(a) - i->ptr_shift])
++#define LINE_MAP(i, a) (i->line_map[(a) - i->ptr_shift])
 +
 +#define get_rec(env, s, l) \
 +	(env->xdf##s.recs[l-1])
@@ -189,7 +186,7 @@ index 0000000..04f5c1e
 +				new_rec->next = rec;
 +				rec->previous = new_rec;
 +				*rec_chain = new_rec;
-+				INDEX_NEXT(index, ptr).rec = new_rec;
++				LINE_MAP(index, ptr) = new_rec;
 +				goto continue_scan;
 +			}
 +
@@ -207,7 +204,7 @@ index 0000000..04f5c1e
 +		new_rec->ptr = ptr;
 +		new_rec->cnt = 1;
 +		new_rec->next = new_rec->previous = NULL;
-+		INDEX_NEXT(index, ptr).rec = new_rec;
++		LINE_MAP(index, ptr) = new_rec;
 +		*rec_chain = new_rec;
 +
 +continue_scan:
@@ -219,13 +216,13 @@ index 0000000..04f5c1e
 +
 +static int get_next_ptr(struct histindex *index, int ptr)
 +{
-+	struct record *rec = INDEX_NEXT(index, ptr).rec->next;
++	struct record *rec = LINE_MAP(index, ptr)->next;
 +	return rec ? rec->ptr : 0;
 +}
 +
 +static int get_cnt(struct histindex *index, int ptr)
 +{
-+	struct record *rec = INDEX_NEXT(index, ptr).rec;
++	struct record *rec = LINE_MAP(index, ptr);
 +	return rec ? rec->cnt : 0;
 +}
 +
@@ -374,7 +371,7 @@ index 0000000..04f5c1e
 +	index.xpp = xpp;
 +
 +	index.records = NULL;
-+	index.records_next = NULL;
++	index.line_map = NULL;
 +
 +	index.table_bits = xdl_hashbits(count1);
 +	sz = index.records_size = 1 << index.table_bits;
@@ -383,11 +380,11 @@ index 0000000..04f5c1e
 +		goto cleanup;
 +	memset(index.records, 0, sz);
 +
-+	sz = index.records_next_size = count1;
-+	sz *= sizeof(struct record_next);
-+	if (!(index.records_next = (struct record_next *) xdl_malloc(sz)))
++	sz = index.line_map_size = count1;
++	sz *= sizeof(struct record *);
++	if (!(index.line_map = (struct record **) xdl_malloc(sz)))
 +		goto cleanup;
-+	memset(index.records_next, 0, sz);
++	memset(index.line_map, 0, sz);
 +
 +	index.ptr_shift = line1;
 +	index.max_chain_length = 64;
@@ -416,7 +413,7 @@ index 0000000..04f5c1e
 +
 +cleanup:
 +	xdl_free(index.records);
-+	xdl_free(index.records_next);
++	xdl_free(index.line_map);
 +
 +	return result;
 +}
