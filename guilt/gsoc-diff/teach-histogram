@@ -95,7 +95,7 @@ index ad033a8..7a92ea9 100644
  #endif /* #if !defined(XDIFFI_H) */
 diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
 new file mode 100644
-index 0000000..4542d7f
+index 0000000..635eacd
 --- /dev/null
 +++ b/xdiff/xhistogram.c
 @@ -0,0 +1,332 @@
@@ -378,7 +378,7 @@ index 0000000..4542d7f
 +	/* so that xdl_cha_free() doesn't break */
 +	index.rcha.head = NULL;
 +	/* lines / 4 + 1 comes from xprepare.c:xdl_prepare_ctx() */
-+	if (!xdl_cha_init(&index.rcha, sizeof(struct record), count1 / 4 + 1))
++	if (xdl_cha_init(&index.rcha, sizeof(struct record), count1 / 4 + 1) < 0)
 +		goto cleanup;
 +
 +	index.ptr_shift = line1;
