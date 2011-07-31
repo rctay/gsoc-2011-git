@@ -95,7 +95,7 @@ index ad033a8..7a92ea9 100644
  #endif /* #if !defined(XDIFFI_H) */
 diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
 new file mode 100644
-index 0000000..c9fd76e
+index 0000000..53fe4cc
 --- /dev/null
 +++ b/xdiff/xhistogram.c
 @@ -0,0 +1,333 @@
@@ -201,7 +201,7 @@ index 0000000..c9fd76e
 +			return -1;
 +		new_rec->ptr = ptr;
 +		new_rec->cnt = 1;
-+		new_rec->next = NULL;
++		new_rec->next = *rec_chain;
 +		LINE_MAP(index, ptr) = new_rec;
 +		*rec_chain = new_rec;
 +
