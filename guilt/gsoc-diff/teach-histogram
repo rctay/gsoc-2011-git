@@ -108,10 +108,10 @@ index ad033a8..7a92ea9 100644
  #endif /* #if !defined(XDIFFI_H) */
 diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
 new file mode 100644
-index 0000000..3edbba1
+index 0000000..b26da77
 --- /dev/null
 +++ b/xdiff/xhistogram.c
-@@ -0,0 +1,340 @@
+@@ -0,0 +1,341 @@
 +#include "xinclude.h"
 +#include "xtypes.h"
 +#include "xdiff.h"
@@ -199,6 +199,7 @@ index 0000000..3edbba1
 +				 */
 +				NEXT_PTR(index, ptr) = rec->ptr;
 +				rec->ptr = ptr;
++				/* cap rec->cnt at MAX_CNT */
 +				rec->cnt = XDL_MIN(MAX_CNT, rec->cnt + 1);
 +				LINE_MAP(index, ptr) = rec;
 +				goto continue_scan;
