@@ -77,7 +77,7 @@ index ad033a8..7a92ea9 100644
  #endif /* #if !defined(XDIFFI_H) */
 diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
 new file mode 100644
-index 0000000..53fc76f
+index 0000000..76abddb
 --- /dev/null
 +++ b/xdiff/xhistogram.c
 @@ -0,0 +1,334 @@
@@ -392,8 +392,8 @@ index 0000000..53fc76f
 +				line1, lcs.begin1 - line1,
 +				line2, lcs.begin2 - line2);
 +			histogram_diff(file1, file2, xpp, env,
-+				lcs.end1, line1 + count1 - lcs.end1,
-+				lcs.end2, line2 + count2 - lcs.end2);
++				lcs.end1 + 1, LINE_END(line1, count1) - lcs.end1,
++				lcs.end2 + 1, LINE_END(line2, count2) - lcs.end2);
 +		}
 +	}
 +
