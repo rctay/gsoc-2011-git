@@ -95,7 +95,7 @@ index ad033a8..7a92ea9 100644
  #endif /* #if !defined(XDIFFI_H) */
 diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
 new file mode 100644
-index 0000000..55e2d17
+index 0000000..291eb0b
 --- /dev/null
 +++ b/xdiff/xhistogram.c
 @@ -0,0 +1,338 @@
@@ -244,8 +244,8 @@ index 0000000..55e2d17
 +			should_break = 0;
 +			np = INDEX_NEXT(index, as);
 +			bs = b_ptr;
-+			ae = as + 1;
-+			be = bs + 1;
++			ae = as;
++			be = bs;
 +			rc = REC_CNT(rec);
 +
 +			while (line1 < as && line2 < bs
@@ -265,7 +265,7 @@ index 0000000..55e2d17
 +
 +			if (b_next < be)
 +				b_next = be;
-+			if (lcs->end1 - lcs->begin1 < ae - as || rc < index->cnt) {
++			if (lcs->end1 - lcs->begin1 + 1 < ae - as || rc < index->cnt) {
 +				lcs->begin1 = as;
 +				lcs->begin2 = bs;
 +				lcs->end1 = ae;
