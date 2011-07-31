@@ -1,3 +1,13 @@
+xdiff/xprepare: use a smaller sample size for histogram diff
+
+For histogram diff, we can afford a smaller sample size and thus a
+poorer estimate of the number of lines, as the hash table (rhash) won't
+be filled up/grown. This is safe as the final count of lines (xdf.nrecs)
+will be updated correctly anyway by xdl_prepare_ctx().
+
+This gives us a small boost in performance.
+
+Signed-off-by: Tay Ray Chuan <rctay89@gmail.com>
 diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
 index c139ba8..b4d8402 100644
 --- a/xdiff/xprepare.c
