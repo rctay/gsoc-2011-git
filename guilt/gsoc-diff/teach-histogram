@@ -1,3 +1,16 @@
+teach --histogram to diff
+
+Port JGit's HistogramDiff algorithm over to C. Rough numbers (TODO) show
+that it is faster than its --patience cousin, as well as the default
+Meyers algorithm.
+
+The implementation has been reworked to use structs and pointers,
+instead of bitmasks, thus doing away with JGit's 2^28 line limit.
+
+We also use xdiff's default hash table implementation (xdl_hash_bits()
+with XDL_HASHLONG()) for convenience.
+
+Signed-off-by: Tay Ray Chuan <rctay89@gmail.com>
 diff --git a/Makefile b/Makefile
 index 775ee83..9930e6b 100644
 --- a/Makefile
