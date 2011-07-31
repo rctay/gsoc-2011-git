@@ -95,7 +95,7 @@ index ad033a8..7a92ea9 100644
  #endif /* #if !defined(XDIFFI_H) */
 diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
 new file mode 100644
-index 0000000..f8312fb
+index 0000000..df93e46
 --- /dev/null
 +++ b/xdiff/xhistogram.c
 @@ -0,0 +1,335 @@
@@ -114,7 +114,7 @@ index 0000000..f8312fb
 +	struct record {
 +		unsigned int ptr, cnt;
 +		struct record *next, *previous;
-+	} **records, *rec_idxs;
++	} **records;
 +	unsigned int table_bits, records_size;
 +
 +	struct record_next {
