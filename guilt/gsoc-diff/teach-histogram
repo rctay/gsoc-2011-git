@@ -95,10 +95,10 @@ index ad033a8..7a92ea9 100644
  #endif /* #if !defined(XDIFFI_H) */
 diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
 new file mode 100644
-index 0000000..636550d
+index 0000000..27d8129
 --- /dev/null
 +++ b/xdiff/xhistogram.c
-@@ -0,0 +1,340 @@
+@@ -0,0 +1,356 @@
 +#include "xinclude.h"
 +#include "xtypes.h"
 +#include "xdiff.h"
@@ -150,18 +150,29 @@ index 0000000..636550d
 +#define INDEX_NEXT(i, a) (i->next[(a) - i->ptr_shift])
 +#define INDEX_REC_IDXS(i, a) (i->rec_idxs[(a) - i->ptr_shift])
 +
++static xdfile_t *map_env_side(xdfenv_t *env, int s)
++{
++	return s == 1 ? &env->xdf1 : &env->xdf2;
++}
++
 +static xdfile_t *map_side(struct histindex *index, int s)
 +{
-+	return s == 1 ? &index->env->xdf1 : &index->env->xdf2;
++	return map_env_side(index->env, s);
++}
++
++static int cmp_env(xpparam_t const *xpp, xdfenv_t *env,
++	int side1, int line1, int side2, int line2)
++{
++	xrecord_t *r1 = (map_env_side(env, side1))->recs[line1 - 1],
++		  *r2 = (map_env_side(env, side2))->recs[line2 - 1];
++	return xdl_recmatch(r1->ptr, r1->size, r2->ptr, r2->size,
++			    xpp->flags);
 +}
 +
 +static int cmp(struct histindex *index,
 +	int side1, int line1, int side2, int line2)
 +{
-+	xrecord_t *r1 = (map_side(index, side1))->recs[line1 - 1],
-+		  *r2 = (map_side(index, side2))->recs[line2 - 1];
-+	return xdl_recmatch(r1->ptr, r1->size, r2->ptr, r2->size,
-+			    index->xpp->flags);
++	return cmp_env(index->xpp, index->env, side1, line1, side2, line2);
 +}
 +
 +static unsigned int table_hash(struct histindex *index, int side, int line)
@@ -310,18 +321,18 @@ index 0000000..636550d
 +	return index->has_common && index->max_chain_length < index->cnt;
 +}
 +
-+static void reduce_common_start_end(struct histindex *index,
++static void reduce_common_start_end(xpparam_t const *xpp, xdfenv_t *env,
 +	int *line1, int *count1, int *line2, int *count2)
 +{
 +	if (*count1 <= 1 || *count2 <= 1)
 +		return;
-+	while (*count1 > 1 && *count2 > 1 && cmp(index, 1, *line1, 2, *line2)) {
++	while (*count1 > 1 && *count2 > 1 && cmp_env(xpp, env, 1, *line1, 2, *line2)) {
 +		(*line1)++;
 +		(*count1)--;
 +		(*line2)++;
 +		(*count2)--;
 +	}
-+	while (*count1 > 1 && *count2 > 1 && cmp(index, 1, LINE_END_PTR(1), 2, LINE_END_PTR(2))) {
++	while (*count1 > 1 && *count2 > 1 && cmp_env(xpp, env, 1, LINE_END_PTR(1), 2, LINE_END_PTR(2))) {
 +		(*count1)--;
 +		(*count2)--;
 +	}
@@ -365,8 +376,6 @@ index 0000000..636550d
 +
 +	index.env = env;
 +	index.xpp = xpp;
-+
-+ 	reduce_common_start_end(&index, &line1, &count1, &line2, &count2);
 +
 +	index.table = NULL;
 +	index.recs = NULL;
@@ -433,11 +442,18 @@ index 0000000..636550d
 +int xdl_do_histogram_diff(mmfile_t *file1, mmfile_t *file2,
 +	xpparam_t const *xpp, xdfenv_t *env)
 +{
++	int line1, line2, count1, count2;
++
 +	if (xdl_prepare_env(file1, file2, xpp, env) < 0)
 +		return -1;
 +
-+	return histogram_diff(file1, file2, xpp, env,
-+		1, env->xdf1.nrec, 1, env->xdf2.nrec);
++	line1 = line2 = 1;
++	count1 = env->xdf1.nrec;
++	count2 = env->xdf2.nrec;
++
++	reduce_common_start_end(xpp, env, &line1, &count1, &line2, &count2);
++
++	return histogram_diff(xpp, env, line1, count1, line2, count2);
 +}
 diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
 index 3ebad0f..0616359 100644
