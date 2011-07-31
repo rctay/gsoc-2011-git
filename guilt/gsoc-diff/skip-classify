@@ -1,3 +1,14 @@
+xdiff/xprepare: skip classification
+
+xdl_classify_record() replaces the hash member (xrecord_t.ha) with a
+unique identifier of the record/line, such that the hashes are
+"linearized" (as Dscho calls it in xpatience.c).
+
+We don't want that in histogram diff, so turn it off.
+
+This gives us a small boost in performance.
+
+Signed-off-by: Tay Ray Chuan <rctay89@gmail.com>
 diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
 index 3ebad0f..98861ff 100644
 --- a/xdiff/xprepare.c
