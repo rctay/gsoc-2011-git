@@ -95,7 +95,7 @@ index ad033a8..7a92ea9 100644
  #endif /* #if !defined(XDIFFI_H) */
 diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
 new file mode 100644
-index 0000000..a754242
+index 0000000..58d78a0
 --- /dev/null
 +++ b/xdiff/xhistogram.c
 @@ -0,0 +1,341 @@
@@ -349,6 +349,9 @@ index 0000000..a754242
 +	if (count1 <= 0 && count2 <= 0)
 +		return 0;
 +
++	if (LINE_END(1) >= MAX_PTR)
++		return -1;
++
 +	if (!count1) {
 +		while(count2--)
 +			env->xdf2.rchg[line2++ - 1] = 1;
@@ -365,9 +368,6 @@ index 0000000..a754242
 +	index.xpp = xpp;
 +
 + 	reduce_common_start_end(&index, &line1, &count1, &line2, &count2);
-+
-+	if (LINE_END(1) >= MAX_PTR)
-+		return -1;
 +
 +	index.table = NULL;
 +	index.recs = NULL;
