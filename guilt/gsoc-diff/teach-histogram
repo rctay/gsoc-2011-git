@@ -95,10 +95,10 @@ index ad033a8..7a92ea9 100644
  #endif /* #if !defined(XDIFFI_H) */
 diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
 new file mode 100644
-index 0000000..4239090
+index 0000000..5374ff1
 --- /dev/null
 +++ b/xdiff/xhistogram.c
-@@ -0,0 +1,335 @@
+@@ -0,0 +1,338 @@
 +#include "xinclude.h"
 +#include "xtypes.h"
 +#include "xdiff.h"
@@ -343,6 +343,9 @@ index 0000000..4239090
 +	struct region lcs;
 +	int sz;
 +	int result = -1;
++
++	if (count1 <= 0 && count2 <= 0)
++		return 0;
 +
 +	if (!count1) {
 +		while(count2--)
