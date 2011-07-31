@@ -1,5 +1,5 @@
 diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
-index 3ebad0f..98f5766 100644
+index 3ebad0f..113c672 100644
 --- a/xdiff/xprepare.c
 +++ b/xdiff/xprepare.c
 @@ -26,6 +26,7 @@
@@ -42,7 +42,7 @@ index 3ebad0f..98f5766 100644
  
  
 +static void xdl_trim_head(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
-+			 xdfile_t *xdf1, xdfile_t *xdf2) {
++			  xdfile_t *xdf1, xdfile_t *xdf2) {
 +
 +	long trimmed = 0, recovered = 0;
 +	long smaller = XDL_MIN(mf1->size, mf2->size);
