@@ -1,5 +1,5 @@
 diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
-index 3ebad0f..46215f1 100644
+index 3ebad0f..f250d30 100644
 --- a/xdiff/xprepare.c
 +++ b/xdiff/xprepare.c
 @@ -57,7 +57,8 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
@@ -12,7 +12,7 @@ index 3ebad0f..46215f1 100644
  static int xdl_optimize_ctxs(xdfile_t *xdf1, xdfile_t *xdf2);
  
  
-@@ -130,6 +131,47 @@ static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned
+@@ -130,6 +131,48 @@ static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned
  }
  
  
@@ -21,16 +21,17 @@ index 3ebad0f..46215f1 100644
 + */
 +static int xdl_trim_ends(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
 +			 xdfile_t *xdf1, xdfile_t *xdf2) {
-+	long i, bsize;
++	long i;
 +	char const *prev1, *prev2, *cur1, *cur2, *top1, *top2;
 +
-+	if ((cur1 = xdl_mmfile_first(mf1, &bsize)) == NULL)
-+		return 0;
-+	top1 = cur1 + bsize;
++	cur1 = mf1->ptr;
++	cur2 = mf2->ptr;
 +
-+	if ((cur2 = xdl_mmfile_first(mf2, &bsize)) == NULL)
++	if (!cur1 || !cur2)
 +		return 0;
-+	top2 = cur2 + bsize;
++
++	top1 = cur1 + mf1->size;
++	top2 = cur2 + mf2->size;
 +
 +	/* TODO: trim on whitespace rules */
 +	i = 0;
@@ -60,7 +61,7 @@ index 3ebad0f..46215f1 100644
  static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
  			   xdlclassifier_t *cf, xdfile_t *xdf) {
  	unsigned int hbits;
-@@ -164,7 +206,12 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+@@ -164,7 +207,12 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
  	if ((cur = blk = xdl_mmfile_first(mf, &bsize)) != NULL) {
  		for (top = blk + bsize; cur < top; ) {
  			prev = cur;
@@ -74,7 +75,7 @@ index 3ebad0f..46215f1 100644
  			if (nrec >= narec) {
  				narec *= 2;
  				if (!(rrecs = (xrecord_t **) xdl_realloc(recs, narec * sizeof(xrecord_t *))))
-@@ -178,7 +225,7 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+@@ -178,7 +226,7 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
  			crec->ha = hav;
  			recs[nrec++] = crec;
  
@@ -83,7 +84,7 @@ index 3ebad0f..46215f1 100644
  				goto abort;
  		}
  	}
-@@ -200,7 +247,6 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+@@ -200,7 +248,6 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
  	xdf->rindex = rindex;
  	xdf->nreff = 0;
  	xdf->ha = ha;
@@ -91,7 +92,7 @@ index 3ebad0f..46215f1 100644
  	xdf->dend = nrec - 1;
  
  	return 0;
-@@ -240,6 +286,12 @@ int xdl_prepare_env(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
+@@ -240,6 +287,12 @@ int xdl_prepare_env(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
  		return -1;
  	}
  
@@ -104,7 +105,7 @@ index 3ebad0f..46215f1 100644
  	if (xdl_prepare_ctx(mf1, enl1, xpp, &cf, &xe->xdf1) < 0) {
  
  		xdl_free_classifier(&cf);
-@@ -403,39 +455,9 @@ static int xdl_cleanup_records(xdfile_t *xdf1, xdfile_t *xdf2) {
+@@ -403,39 +456,9 @@ static int xdl_cleanup_records(xdfile_t *xdf1, xdfile_t *xdf2) {
  }
  
  
