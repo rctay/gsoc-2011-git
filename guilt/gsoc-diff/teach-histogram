@@ -95,10 +95,10 @@ index ad033a8..7a92ea9 100644
  #endif /* #if !defined(XDIFFI_H) */
 diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
 new file mode 100644
-index 0000000..679a2df
+index 0000000..1f02566
 --- /dev/null
 +++ b/xdiff/xhistogram.c
-@@ -0,0 +1,338 @@
+@@ -0,0 +1,340 @@
 +#include "xinclude.h"
 +#include "xtypes.h"
 +#include "xdiff.h"
@@ -199,6 +199,8 @@ index 0000000..679a2df
 +		if (chain_len == index->max_chain_length)
 +			return -1;
 +
++		if (index->recs_count >= MAX_PTR)
++			return -1;
 +		rec_idx = ++index->recs_count;
 +		if (rec_idx == index->recs_size) {
 +			index->recs_size = XDL_MIN(index->recs_size << 1, 1 + count1);
