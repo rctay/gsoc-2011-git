@@ -2,3 +2,4 @@ use-memset
 remove-mmfile_next
 refactor-abort
 refactor-fallback
+refactor-tests
