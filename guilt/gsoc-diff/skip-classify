@@ -2,9 +2,13 @@ xdiff/xprepare: skip classification
 
 xdl_classify_record() replaces the hash member (xrecord_t.ha) with a
 unique identifier of the record/line, such that the hashes are
-"linearized" (as Dscho calls it in xpatience.c).
+"linearized" (as Dscho calls it in xpatience.c). The records are then
+placed into a hash table (xrecord_t.rhash).
 
-We don't want that in histogram diff, so turn it off.
+We don't want that in histogram diff, so we omit calls to record
+classification functions (that is, xdl_init_classifier() and
+xdl_classify_record()). We also skip allocating memory to the hash
+table, rhash, as it is no longer used.
 
 This gives us a small boost in performance.
 
