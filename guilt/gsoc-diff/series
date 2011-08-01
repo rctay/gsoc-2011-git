@@ -1,8 +1,0 @@
-use-memset
-remove-mmfile_next
-refactor-abort
-refactor-fallback
-refactor-tests
-teach-histogram
-skip-classify
-guess-lines
