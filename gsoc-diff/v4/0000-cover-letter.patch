@@ -1,0 +1,61 @@
+From f2e0df8837344f5f48880678ac75ae7047acbf03 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Tue, 12 Jul 2011 12:26:38 +0800
+Subject: [RFC/PATCH 0/3] teach --histogram to diff
+
+(Shawn, I was held up with the patch messages, sorry for the delay.)
+
+Port JGit's HistogramDiff(Index) over to C. This algorithm extends the
+patience algorithm to "support low-occurrence common elements" [1].
+
+Rough numbers show that it is a faster alternative to its --patience
+cousin, as well as to the default Meyers algorithm:
+
+  $ time ./git log --histogram -p v1.0.0 >/dev/null
+  
+  real    0m12.998s
+  user    0m11.506s
+  sys     0m1.487s
+  $ time ./git log -p v1.0.0 >/dev/null
+  
+  real    0m13.575s
+  user    0m12.101s
+  sys     0m1.468s
+  $ time ./git log --patience -p v1.0.0 >/dev/null
+  
+  real    0m14.978s
+  user    0m13.508s
+  sys     0m1.464s
+
+The first patch implements JGit's HistogramDiff(Index) proper. The
+second and third patches aren't essential but yield performance gains.
+
+Note: these patches must be applied on top of rc/histogram-diff in pu.
+
+Contents:
+[RFC/PATCH 1/3] teach --histogram to diff
+[RFC/PATCH 2/3] xdiff/xprepare: skip classification
+[RFC/PATCH 3/3] xdiff/xprepare: use a smaller sample size for histogram
+
+ Makefile                  |    2 +-
+ diff.c                    |    2 +
+ merge-recursive.c         |    2 +
+ t/t4048-diff-histogram.sh |   12 ++
+ xdiff/xdiff.h             |    1 +
+ xdiff/xdiffi.c            |    3 +
+ xdiff/xdiffi.h            |    2 +
+ xdiff/xhistogram.c        |  384 +++++++++++++++++++++++++++++++++++++++++++++
+ xdiff/xprepare.c          |   41 ++++--
+ xdiff/xutils.c            |    8 +-
+ xdiff/xutils.h            |    2 +-
+ 11 files changed, 440 insertions(+), 19 deletions(-)
+ create mode 100755 t/t4048-diff-histogram.sh
+ create mode 100644 xdiff/xhistogram.c
+
+--
+Footnotes:
+[1] http://egit.eclipse.org/w/?p=jgit.git;a=blob;f=org.eclipse.jgit/src/org/eclipse/jgit/diff/HistogramDiff.java;hb=HEAD
+
+-- 
+1.7.3.4.681.gb718e
+
