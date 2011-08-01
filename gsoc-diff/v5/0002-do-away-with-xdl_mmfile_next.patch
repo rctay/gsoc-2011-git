@@ -1,0 +1,83 @@
+From 0ec582702d05ddd9509f2f1ecc3c9eb5e3d7162e Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Mon, 1 Aug 2011 00:15:36 +0800
+Subject: [PATCH v2 2/8] do away with xdl_mmfile_next()
+
+Given our simple mmfile structure, xdl_mmfile_next() calls are
+redundant. Do away with calls to them.
+
+Signed-off-by: Tay Ray Chuan <rctay89@gmail.com>
+---
+
+New in v2.
+
+ xdiff/xdiff.h    |    1 -
+ xdiff/xprepare.c |    7 +------
+ xdiff/xutils.c   |   14 +-------------
+ 3 files changed, 2 insertions(+), 20 deletions(-)
+
+diff --git a/xdiff/xdiff.h b/xdiff/xdiff.h
+index 711048e..6ea1d0e 100644
+--- a/xdiff/xdiff.h
++++ b/xdiff/xdiff.h
+@@ -105,7 +105,6 @@ typedef struct s_bdiffparam {
+ #define xdl_realloc(ptr,x) realloc(ptr,x)
+ 
+ void *xdl_mmfile_first(mmfile_t *mmf, long *size);
+-void *xdl_mmfile_next(mmfile_t *mmf, long *size);
+ long xdl_mmfile_size(mmfile_t *mmf);
+ 
+ int xdl_diff(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
+diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
+index 783631a..49c7e8a 100644
+--- a/xdiff/xprepare.c
++++ b/xdiff/xprepare.c
+@@ -165,12 +165,7 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+ 
+ 	nrec = 0;
+ 	if ((cur = blk = xdl_mmfile_first(mf, &bsize)) != NULL) {
+-		for (top = blk + bsize;;) {
+-			if (cur >= top) {
+-				if (!(cur = blk = xdl_mmfile_next(mf, &bsize)))
+-					break;
+-				top = blk + bsize;
+-			}
++		for (top = blk + bsize; cur < top; ) {
+ 			prev = cur;
+ 			hav = xdl_hash_record(&cur, top, xpp->flags);
+ 			if (nrec >= narec) {
+diff --git a/xdiff/xutils.c b/xdiff/xutils.c
+index ab65034..ea1357d 100644
+--- a/xdiff/xutils.c
++++ b/xdiff/xutils.c
+@@ -71,12 +71,6 @@ void *xdl_mmfile_first(mmfile_t *mmf, long *size)
+ }
+ 
+ 
+-void *xdl_mmfile_next(mmfile_t *mmf, long *size)
+-{
+-	return NULL;
+-}
+-
+-
+ long xdl_mmfile_size(mmfile_t *mmf)
+ {
+ 	return mmf->size;
+@@ -164,13 +158,7 @@ long xdl_guess_lines(mmfile_t *mf) {
+ 	char const *data, *cur, *top;
+ 
+ 	if ((cur = data = xdl_mmfile_first(mf, &size)) != NULL) {
+-		for (top = data + size; nl < XDL_GUESS_NLINES;) {
+-			if (cur >= top) {
+-				tsize += (long) (cur - data);
+-				if (!(cur = data = xdl_mmfile_next(mf, &size)))
+-					break;
+-				top = data + size;
+-			}
++		for (top = data + size; nl < XDL_GUESS_NLINES && cur < top; ) {
+ 			nl++;
+ 			if (!(cur = memchr(cur, '\n', top - cur)))
+ 				cur = top;
+-- 
+1.7.3.4.730.g67af1.dirty
+

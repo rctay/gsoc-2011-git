@@ -1,0 +1,58 @@
+From ccb47bcde46ec7dfc65ccee8d010d1e00ed31bc0 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 20:35:58 +0800
+Subject: [PATCH v2 1/8] xdiff/xprepare: use memset()
+
+Use memset() instead of a for loop to initialize. This could give a
+performance advantage.
+
+Signed-off-by: Tay Ray Chuan <rctay89@gmail.com>
+---
+ xdiff/xprepare.c |   10 +++-------
+ 1 files changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
+index 1689085..783631a 100644
+--- a/xdiff/xprepare.c
++++ b/xdiff/xprepare.c
+@@ -64,8 +64,6 @@ static int xdl_optimize_ctxs(xdfile_t *xdf1, xdfile_t *xdf2);
+ 
+ 
+ static int xdl_init_classifier(xdlclassifier_t *cf, long size, long flags) {
+-	long i;
+-
+ 	cf->flags = flags;
+ 
+ 	cf->hbits = xdl_hashbits((unsigned int) size);
+@@ -80,8 +78,7 @@ static int xdl_init_classifier(xdlclassifier_t *cf, long size, long flags) {
+ 		xdl_cha_free(&cf->ncha);
+ 		return -1;
+ 	}
+-	for (i = 0; i < cf->hsize; i++)
+-		cf->rchash[i] = NULL;
++	memset(cf->rchash, 0, cf->hsize * sizeof(xdlclass_t *));
+ 
+ 	cf->count = 0;
+ 
+@@ -136,7 +133,7 @@ static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned
+ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+ 			   xdlclassifier_t *cf, xdfile_t *xdf) {
+ 	unsigned int hbits;
+-	long i, nrec, hsize, bsize;
++	long nrec, hsize, bsize;
+ 	unsigned long hav;
+ 	char const *blk, *cur, *top, *prev;
+ 	xrecord_t *crec;
+@@ -164,8 +161,7 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+ 		xdl_cha_free(&xdf->rcha);
+ 		return -1;
+ 	}
+-	for (i = 0; i < hsize; i++)
+-		rhash[i] = NULL;
++	memset(rhash, 0, hsize * sizeof(xrecord_t *));
+ 
+ 	nrec = 0;
+ 	if ((cur = blk = xdl_mmfile_first(mf, &bsize)) != NULL) {
+-- 
+1.7.3.4.730.g67af1.dirty
+

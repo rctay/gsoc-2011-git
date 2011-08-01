@@ -1,0 +1,33 @@
+From fb0677d69209f7f31b3272b27afd787316da316f Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Mon, 1 Aug 2011 10:18:14 +0800
+Subject: [PATCH v2 0/8] teach --histogram to diff
+
+Port JGit's HistogramDiff(Index) over to C. This algorithm extends the
+patience algorithm to "support low-occurrence common elements" [1].
+Rough numbers show that it is a faster alternative to its --patience
+cousin, as well as to the default Meyers algorithm.
+
+Changed from v1/RFC:
+ - patch #2 is new
+ - patch #6 been changed
+ - all other patches are unchanged
+
+Contents:
+[PATCH v2 1/8] xdiff/xprepare: use memset()
+[PATCH v2 2/8] do away with xdl_mmfile_next()
+[PATCH v2 3/8] xdiff/xprepare: refactor abort cleanups
+[PATCH v2 4/8] xdiff/xpatience: factor out fall-back-diff function
+[PATCH v2 5/8] t4033-diff-patience: factor out tests
+[PATCH v2 6/8] teach --histogram to diff
+[PATCH v2 7/8] xdiff/xprepare: skip classification
+[PATCH v2 8/8] xdiff/xprepare: use a smaller sample size for histogram diff
+
+--
+Footnotes:
+[1]
+http://egit.eclipse.org/w/?p=jgit.git;a=blob;f=org.eclipse.jgit/src/org/eclipse/jgit/diff/HistogramDiff.java;hb=HEAD
+
+-- 
+1.7.3.4.730.g67af1.dirty
+

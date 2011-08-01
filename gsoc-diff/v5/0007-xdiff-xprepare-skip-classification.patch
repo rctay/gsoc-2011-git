@@ -1,0 +1,85 @@
+From dd12312592f967b2f367e7fb83a235b245b5307d Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Mon, 1 Aug 2011 00:15:27 +0800
+Subject: [PATCH v2 7/8] xdiff/xprepare: skip classification
+
+xdiff performs "classification" of records (xdl_classify_record()),
+replacing hashes (xrecord_t.ha) with a unique identifier of the
+record/line and building a hash table (xrecord_t.rhash) of records. This
+is then used to "cleanup" records (xdl_cleanup_records()).
+
+We don't need any of that in histogram diff, so we omit calls to these
+functions. We also skip allocating memory to the hash table, rhash, as
+it is no longer used.
+
+This gives us a small boost in performance.
+
+Signed-off-by: Tay Ray Chuan <rctay89@gmail.com>
+---
+ xdiff/xprepare.c |   28 ++++++++++++++++++----------
+ 1 files changed, 18 insertions(+), 10 deletions(-)
+
+diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
+index 3ebad0f..c139ba8 100644
+--- a/xdiff/xprepare.c
++++ b/xdiff/xprepare.c
+@@ -154,11 +154,15 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+ 	if (!(recs = (xrecord_t **) xdl_malloc(narec * sizeof(xrecord_t *))))
+ 		goto abort;
+ 
+-	hbits = xdl_hashbits((unsigned int) narec);
+-	hsize = 1 << hbits;
+-	if (!(rhash = (xrecord_t **) xdl_malloc(hsize * sizeof(xrecord_t *))))
+-		goto abort;
+-	memset(rhash, 0, hsize * sizeof(xrecord_t *));
++	if (xpp->flags & XDF_HISTOGRAM_DIFF)
++		hbits = hsize = 0;
++	else {
++		hbits = xdl_hashbits((unsigned int) narec);
++		hsize = 1 << hbits;
++		if (!(rhash = (xrecord_t **) xdl_malloc(hsize * sizeof(xrecord_t *))))
++			goto abort;
++		memset(rhash, 0, hsize * sizeof(xrecord_t *));
++	}
+ 
+ 	nrec = 0;
+ 	if ((cur = blk = xdl_mmfile_first(mf, &bsize)) != NULL) {
+@@ -178,7 +182,8 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+ 			crec->ha = hav;
+ 			recs[nrec++] = crec;
+ 
+-			if (xdl_classify_record(cf, rhash, hbits, crec) < 0)
++			if (!(xpp->flags & XDF_HISTOGRAM_DIFF) &&
++				xdl_classify_record(cf, rhash, hbits, crec) < 0)
+ 				goto abort;
+ 		}
+ 	}
+@@ -235,7 +240,8 @@ int xdl_prepare_env(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
+ 	enl1 = xdl_guess_lines(mf1) + 1;
+ 	enl2 = xdl_guess_lines(mf2) + 1;
+ 
+-	if (xdl_init_classifier(&cf, enl1 + enl2 + 1, xpp->flags) < 0) {
++	if (!(xpp->flags & XDF_HISTOGRAM_DIFF) &&
++		xdl_init_classifier(&cf, enl1 + enl2 + 1, xpp->flags) < 0) {
+ 
+ 		return -1;
+ 	}
+@@ -252,10 +258,12 @@ int xdl_prepare_env(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
+ 		return -1;
+ 	}
+ 
+-	xdl_free_classifier(&cf);
++	if (!(xpp->flags & XDF_HISTOGRAM_DIFF))
++		xdl_free_classifier(&cf);
+ 
+-	if (!(xpp->flags & XDF_PATIENCE_DIFF) &&
+-			xdl_optimize_ctxs(&xe->xdf1, &xe->xdf2) < 0) {
++	if ((xpp->flags & XDF_HISTOGRAM_DIFF) ?
++		xdl_trim_ends(&xe->xdf1, &xe->xdf2) < 0
++		: (!(xpp->flags & XDF_PATIENCE_DIFF) && xdl_optimize_ctxs(&xe->xdf1, &xe->xdf2) < 0)) {
+ 
+ 		xdl_free_ctx(&xe->xdf2);
+ 		xdl_free_ctx(&xe->xdf1);
+-- 
+1.7.3.4.730.g67af1.dirty
+
