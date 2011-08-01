@@ -1,0 +1,27 @@
+xdiff/xhistogram: drop need for additional variable
+
+Having an additional variable (ptr) instead of changing line(1|2) and
+count(1|2) was for debugging purposes.
+
+Signed-off-by: Tay Ray Chuan <rctay89@gmail.com>
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index 804e19b..3201fc5 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -323,11 +323,10 @@ static int histogram_diff(xpparam_t const *xpp, xdfenv_t *env,
+ 		result = fall_back_to_classic_diff(&index, line1, count1, line2, count2);
+ 	else {
+ 		if (lcs.begin1 == 0 && lcs.begin2 == 0) {
+-			int ptr;
+-			for (ptr = 0; ptr < count1; ptr++)
+-				env->xdf1.rchg[line1 + ptr - 1] = 1;
+-			for (ptr = 0; ptr < count2; ptr++)
+-				env->xdf2.rchg[line2 + ptr - 1] = 1;
++			while (count1--)
++				env->xdf1.rchg[line1++ - 1] = 1;
++			while (count2--)
++				env->xdf2.rchg[line2++ - 1] = 1;
+ 			result = 0;
+ 		} else {
+ 			if (result = histogram_diff(xpp, env,
