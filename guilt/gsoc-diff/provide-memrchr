@@ -1,0 +1,11 @@
+diff --git a/xdiff/xinclude.h b/xdiff/xinclude.h
+index 526ccb3..724130a 100644
+--- a/xdiff/xinclude.h
++++ b/xdiff/xinclude.h
+@@ -38,5 +38,6 @@
+ #include "xdiffi.h"
+ #include "xemit.h"
+ 
++#include "git-compat-util.h"
+ 
+ #endif /* #if !defined(XINCLUDE_H) */
