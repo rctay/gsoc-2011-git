@@ -1,3 +1,12 @@
+xdiff/xinclude: include git-compat-util.h
+
+Also do away with includes that have been made redundant.
+
+This provides memrchr() in xdiff, which we need in the next patch.
+
+Signed-off-by: Tay Ray Chuan <rctay89@gmail.com>
+---
+
 diff --git a/xdiff/xinclude.h b/xdiff/xinclude.h
 index 526ccb3..2aa0a36 100644
 --- a/xdiff/xinclude.h
