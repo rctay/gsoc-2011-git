@@ -1,0 +1,13 @@
+From d6316df251e93bc775dc8126b7c32581eddab91f Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Mon, 1 Aug 2011 11:58:24 +0800
+Subject: [PATCH 0/3] improvements for rc/histogram-diff in 'next'
+
+Contents:
+[PATCH 1/3] xdiff: do away with xdl_mmfile_next()
+[PATCH 2/3] xdiff/xhistogram: fix handling of recursed results
+[PATCH 3/3] xdiff/xhistogram: rely on xdl_trim_ends()
+
+-- 
+1.7.3.4.730.g67af1.dirty
+
