@@ -88,5 +88,5 @@ the git mailing list regarding performance issues with git-diff. With
 the knowledge I had gained of git diff's machinery over the course of
 gsoc, I managed to diagnose the problem and [submitted a patch] [2].
 
-[1] http://mid.gmane.org/loom.20110809T093124-847@post.gmane.org
-[2] mid.gmane.org/1313464312-5132-1-git-send-email-rctay89@gmail.com
+[1]: http://mid.gmane.org/loom.20110809T093124-847@post.gmane.org
+[2]: http://mid.gmane.org/1313464312-5132-1-git-send-email-rctay89@gmail.com
