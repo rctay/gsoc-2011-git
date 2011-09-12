@@ -1,12 +1,21 @@
-From d6316df251e93bc775dc8126b7c32581eddab91f Mon Sep 17 00:00:00 2001
+From 490379c8dbdb67c2b61be9b08aee72a9d3d3446c Mon Sep 17 00:00:00 2001
 From: Tay Ray Chuan <rctay89@gmail.com>
-Date: Mon, 1 Aug 2011 11:58:24 +0800
-Subject: [PATCH 0/3] improvements for rc/histogram-diff in 'next'
+Date: Mon, 1 Aug 2011 12:15:19 +0800
+Subject: [PATCH 0/4] changes for rc/histogram-diff in 'next'
+
+This is a rebased version of this series:
+
+  [PATCH v2 0/8] teach --histogram to diff
+  <1312168608-10828-1-git-send-email-rctay89@gmail.com>
+
+I had overlooked that the previous iteration of the series has been
+added to 'next'.
 
 Contents:
-[PATCH 1/3] xdiff: do away with xdl_mmfile_next()
-[PATCH 2/3] xdiff/xhistogram: fix handling of recursed results
-[PATCH 3/3] xdiff/xhistogram: rely on xdl_trim_ends()
+[PATCH 1/4] xdiff: do away with xdl_mmfile_next()
+[PATCH 2/4] xdiff/xhistogram: rework handling of recursed results
+[PATCH 3/4] xdiff/xhistogram: rely on xdl_trim_ends()
+[PATCH 4/4] xdiff/xhistogram: drop need for additional variable
 
 -- 
 1.7.3.4.730.g67af1.dirty

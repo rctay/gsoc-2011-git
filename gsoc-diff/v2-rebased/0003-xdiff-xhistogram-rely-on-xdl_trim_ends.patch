@@ -1,7 +1,7 @@
-From d6316df251e93bc775dc8126b7c32581eddab91f Mon Sep 17 00:00:00 2001
+From 814aab4da17bc2e39f9553e95e5725cd147ae467 Mon Sep 17 00:00:00 2001
 From: Tay Ray Chuan <rctay89@gmail.com>
 Date: Fri, 22 Jul 2011 20:10:47 +0800
-Subject: [PATCH 3/3] xdiff/xhistogram: rely on xdl_trim_ends()
+Subject: [PATCH 3/4] xdiff/xhistogram: rely on xdl_trim_ends()
 
 Do away with reduce_common_start_end() and use xdf->dstart and xdf->dend
 set by xdl_trim_ends() that similarly tells us where the first unmatched

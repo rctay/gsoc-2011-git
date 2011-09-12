@@ -1,0 +1,36 @@
+From 490379c8dbdb67c2b61be9b08aee72a9d3d3446c Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Mon, 1 Aug 2011 12:12:25 +0800
+Subject: [PATCH 4/4] xdiff/xhistogram: drop need for additional variable
+
+Having an additional variable (ptr) instead of changing line(1|2) and
+count(1|2) was for debugging purposes.
+
+Signed-off-by: Tay Ray Chuan <rctay89@gmail.com>
+---
+ xdiff/xhistogram.c |    9 ++++-----
+ 1 files changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index 804e19b..3201fc5 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -323,11 +323,10 @@ static int histogram_diff(xpparam_t const *xpp, xdfenv_t *env,
+ 		result = fall_back_to_classic_diff(&index, line1, count1, line2, count2);
+ 	else {
+ 		if (lcs.begin1 == 0 && lcs.begin2 == 0) {
+-			int ptr;
+-			for (ptr = 0; ptr < count1; ptr++)
+-				env->xdf1.rchg[line1 + ptr - 1] = 1;
+-			for (ptr = 0; ptr < count2; ptr++)
+-				env->xdf2.rchg[line2 + ptr - 1] = 1;
++			while (count1--)
++				env->xdf1.rchg[line1++ - 1] = 1;
++			while (count2--)
++				env->xdf2.rchg[line2++ - 1] = 1;
+ 			result = 0;
+ 		} else {
+ 			if (result = histogram_diff(xpp, env,
+-- 
+1.7.3.4.730.g67af1.dirty
+

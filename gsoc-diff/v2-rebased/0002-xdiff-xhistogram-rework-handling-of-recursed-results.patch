@@ -1,10 +1,11 @@
-From c671a1a6dbf9f86128cfad5f3d9fb9f9c3946351 Mon Sep 17 00:00:00 2001
+From 0131a307d8741d4a241f7ebe200533a0b109c190 Mon Sep 17 00:00:00 2001
 From: Tay Ray Chuan <rctay89@gmail.com>
 Date: Mon, 1 Aug 2011 11:51:39 +0800
-Subject: [PATCH 2/3] xdiff/xhistogram: fix handling of recursed results
+Subject: [PATCH 2/4] xdiff/xhistogram: rework handling of recursed results
 
-Also, don't execute the next recurse branch if the previous one
-failed.
+Previously we were over-complicating matters by trying to combine the
+recursed results. Now, terminate immediately if a recursive call failed
+and return its result.
 
 Signed-off-by: Tay Ray Chuan <rctay89@gmail.com>
 ---
