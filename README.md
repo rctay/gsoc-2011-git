@@ -80,3 +80,13 @@ this series was sent in to make the maintainer's life easier.
     v2-rebased/0002-xdiff-xhistogram-rework-handling-of-recursed-results.patch
     v2-rebased/0003-xdiff-xhistogram-rely-on-xdl_trim_ends.patch
     v2-rebased/0004-xdiff-xhistogram-drop-need-for-additional-variable.patch
+
+# Related
+
+Towards the close of the gsoc coding period, there was [a thread] [1] on
+the git mailing list regarding performance issues with git-diff. With
+the knowledge I had gained of git diff's machinery over the course of
+gsoc, I managed to diagnose the problem and [submitted a patch] [2].
+
+[1] http://mid.gmane.org/loom.20110809T093124-847@post.gmane.org
+[2] mid.gmane.org/1313464312-5132-1-git-send-email-rctay89@gmail.com
