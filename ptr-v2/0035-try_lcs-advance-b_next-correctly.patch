@@ -1,0 +1,27 @@
+From e0cbb45968c4c25390e891fd70c7fe75d4ebf9c1 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sat, 2 Jul 2011 07:32:14 +0800
+Subject: [PATCH 35/37] try_lcs: advance b_next correctly
+
+---
+ xdiff/xhistogram.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index 462d56d..e5c78d1 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -166,8 +166,8 @@ static int try_lcs(struct histindex *index, struct region *lcs, int b_ptr,
+ 					rc = XDL_MIN(rc, get_cnt(index, ae));
+ 			}
+ 
+-			if (b_next < be)
+-				b_next = be;
++			if (b_next <= be)
++				b_next = be+1;
+ 			if (lcs->end1 - lcs->begin1 + 1 < ae - as || rc < index->cnt) {
+ 				lcs->begin1 = as;
+ 				lcs->begin2 = bs;
+-- 
+1.7.6.12.g6486a.dirty
+

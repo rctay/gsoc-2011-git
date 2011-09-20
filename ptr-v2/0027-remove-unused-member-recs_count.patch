@@ -1,0 +1,34 @@
+From 509467b0226c37c170a4f3ae8896190769c2e806 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Fri, 1 Jul 2011 15:25:16 +0800
+Subject: [PATCH 27/37] remove unused member, recs_count
+
+---
+ xdiff/xhistogram.c |    4 +---
+ 1 files changed, 1 insertions(+), 3 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index 7b4d763..e4792d1 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -26,8 +26,7 @@ struct histindex {
+ 		     key_shift,
+ 		     ptr_shift;
+ 
+-	unsigned int recs_count,
+-		     cnt,
++	unsigned int cnt,
+ 		     has_common;
+ 
+ 	xdfenv_t *env;
+@@ -256,7 +255,6 @@ static int histogram_diff(struct histindex *index,
+ 	index->ptr_shift = line1;
+ 	index->has_common = 0;
+ 	index->cnt = 0;
+-	index->recs_count = 0;
+ 
+ 	memset(index->records, 0, index->records_size * sizeof(struct record *));
+ 	memset(index->records_next, 0, index->records_next_size * sizeof(struct record_next));
+-- 
+1.7.6.12.g6486a.dirty
+

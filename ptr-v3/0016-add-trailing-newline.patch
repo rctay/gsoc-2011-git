@@ -1,0 +1,23 @@
+From 0ab64c5036227b9f2df184944f1459e3e2e38645 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Thu, 30 Jun 2011 11:40:17 +0800
+Subject: [PATCH 16/45] add trailing newline
+
+---
+ xdiff/xhistogram.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index 4161452..659746c 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -352,4 +352,4 @@ cleanup_table:
+ 	; /* no-op */
+ 
+ 	return result;
+-}
+\ No newline at end of file
++}
+-- 
+1.7.6.12.g6486a.dirty
+

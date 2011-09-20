@@ -1,0 +1,51 @@
+From a15adba4677d7063a8b425a4c59f2e7f2ff227fd Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Wed, 29 Jun 2011 00:39:34 +0800
+Subject: [PATCH 08/45] remove region_type
+
+---
+ xdiff/xhistogram.c |   21 +--------------------
+ 1 files changed, 1 insertions(+), 20 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index a91ad38..0cdeae9 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -48,25 +48,6 @@ struct region {
+ 	int begin2, end2;
+ };
+ 
+-#define LCS_REPLACE	1
+-#define LCS_DELETE	2
+-#define LCS_INSERT		3
+-#define LCS_EMPTY		4
+-
+-static int region_type(struct region *lcs)
+-{
+-	if (lcs->begin1 < lcs->end1)
+-		if (lcs->begin2 < lcs->end2)
+-			return LCS_REPLACE;
+-		else
+-			return LCS_DELETE;
+-	else
+-		if (lcs->begin2 < lcs->end2)
+-			return LCS_INSERT;
+-		else
+-			return LCS_EMPTY;
+-}
+-
+ #define INDEX_NEXT(i, a) (i->next[(a) - i->ptr_shift])
+ #define INDEX_REC_IDXS(i, a) (i->rec_idxs[(a) - i->ptr_shift])
+ 
+@@ -288,7 +269,7 @@ static int histogram_diff(struct histindex *index,
+ 	if (find_lcs(index, &lcs, line1, count1, line2, count2))
+ 		result = fall_back_to_classic_diff(index, line1, count1, line2, count2);
+ 	else {
+-		if (region_type(&lcs) == LCS_EMPTY) {
++		if (lcs.begin1 == lcs.end1 && lcs.begin2 == lcs.end2) {
+ 			int ptr;
+ 			for (ptr = 0; ptr < count1; ptr++)
+ 				index->env->xdf1.rchg[line1 + ptr - 1] = 1;
+-- 
+1.7.6.12.g6486a.dirty
+

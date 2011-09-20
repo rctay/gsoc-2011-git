@@ -1,0 +1,25 @@
+From 641eaea6c29e4494de2173722ed56d6c9b0ede6f Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Fri, 1 Jul 2011 18:57:45 +0800
+Subject: [PATCH 31/45] remove unused member, rec_idxs
+
+---
+ xdiff/xhistogram.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index 3ffce49..12784a1 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -13,7 +13,7 @@ struct histindex {
+ 	struct record {
+ 		unsigned int ptr, cnt;
+ 		struct record *next, *previous;
+-	} **records, *rec_idxs;
++	} **records;
+ 	unsigned int records_size;
+ 
+ 	struct record_next {
+-- 
+1.7.6.12.g6486a.dirty
+

@@ -1,0 +1,25 @@
+From 2a84ea71cf873de3ffbf85713c77c058e7f656d4 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Mon, 4 Jul 2011 02:31:58 +0800
+Subject: [PATCH 37/45] scanA: fix orphaning of chains
+
+---
+ xdiff/xhistogram.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index c980f04..2418760 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -98,7 +98,7 @@ static int scanA(struct histindex *index, int line1, int count1)
+ 			return -1;
+ 		new_rec->ptr = ptr;
+ 		new_rec->cnt = 1;
+-		new_rec->next = NULL;
++		new_rec->next = *rec_chain;
+ 		LINE_MAP(index, ptr) = new_rec;
+ 		*rec_chain = new_rec;
+ 
+-- 
+1.7.6.12.g6486a.dirty
+

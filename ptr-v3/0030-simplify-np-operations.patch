@@ -1,0 +1,56 @@
+From 2ffe7f569dfdacafee9d5cb3b5e42d011687cec7 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Fri, 1 Jul 2011 18:49:33 +0800
+Subject: [PATCH 30/45] simplify np operations
+
+---
+ xdiff/xhistogram.c |   15 ++++++++++-----
+ 1 files changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index b63f5ef..3ffce49 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -118,11 +118,17 @@ continue_scan:
+ 	return 0;
+ }
+ 
++static int get_next_ptr(struct histindex *index, int ptr)
++{
++	struct record *rec = INDEX_NEXT(index, ptr).rec->next;
++	return rec ? rec->ptr : 0;
++}
++
+ static int try_lcs(struct histindex *index, struct region *lcs, int b_ptr,
+ 	int line1, int count1, int line2, int count2)
+ {
+ 	unsigned int b_next = b_ptr + 1;
+-	struct record *rec = index->records[table_hash(index, 2, b_ptr)], *rec_ahead;
++	struct record *rec = index->records[table_hash(index, 2, b_ptr)];
+ 	unsigned int as, ae, bs, be, np, rc;
+ 	int should_break;
+ 
+@@ -140,8 +146,7 @@ static int try_lcs(struct histindex *index, struct region *lcs, int b_ptr,
+ 		index->has_common = 1;
+ 		for (;;) {
+ 			should_break = 0;
+-			rec_ahead = INDEX_NEXT(index, as).rec->next;
+-			np = rec_ahead ? rec_ahead->ptr : 0;
++			np = get_next_ptr(index, as);
+ 			bs = b_ptr;
+ 			ae = as;
+ 			be = bs;
+@@ -176,8 +181,8 @@ static int try_lcs(struct histindex *index, struct region *lcs, int b_ptr,
+ 				break;
+ 
+ 			while (np < ae) {
+-				rec_ahead = rec_ahead->next;
+-				if (!rec_ahead || (np = rec_ahead->ptr) == 0) {
++				np = get_next_ptr(index, np);
++				if (np == 0) {
+ 					should_break = 1;
+ 					break;
+ 				}
+-- 
+1.7.6.12.g6486a.dirty
+

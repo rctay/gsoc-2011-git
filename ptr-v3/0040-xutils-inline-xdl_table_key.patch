@@ -1,0 +1,38 @@
+From 60735cd78440118755b3c0e56801999bd6584e95 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Mon, 4 Jul 2011 18:51:02 +0800
+Subject: [PATCH 40/45] xutils: inline xdl_table_key()
+
+---
+ xdiff/xutils.c |    5 -----
+ xdiff/xutils.h |    1 +
+ 2 files changed, 1 insertions(+), 5 deletions(-)
+
+diff --git a/xdiff/xutils.c b/xdiff/xutils.c
+index 4107416..88e539b 100644
+--- a/xdiff/xutils.c
++++ b/xdiff/xutils.c
+@@ -463,8 +463,3 @@ int xdl_table_bits(unsigned int size)
+ 		bits++;
+ 	return bits;
+ }
+-
+-unsigned int xdl_table_key(unsigned long val, unsigned int key_shift)
+-{
+-	return ((unsigned int) (val * 0x9e370001UL)) >> key_shift;
+-}
+diff --git a/xdiff/xutils.h b/xdiff/xutils.h
+index f2d4db3..23ed260 100644
+--- a/xdiff/xutils.h
++++ b/xdiff/xutils.h
+@@ -50,6 +50,7 @@ unsigned int xdl_table_key(unsigned long val, unsigned int key_shift);
+ 
+ #define xdl_table_size(tb) (1 << tb)
+ #define xdl_table_key_shift(tb) (32 - tb)
++#define xdl_table_key(v, k) (((unsigned int) (v * 0x9e370001UL)) >> k)
+ 
+ 
+ #endif /* #if !defined(XUTILS_H) */
+-- 
+1.7.6.12.g6486a.dirty
+

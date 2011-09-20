@@ -1,0 +1,116 @@
+From 5eaebb5eb8e82f4eade9ff74cc6007cf551f522b Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Mon, 20 Jun 2011 10:31:43 +0800
+Subject: [PATCH 03/45] xdiff/xpatience: use new hash table helpers
+
+We also ensure that xprepare does not linearize the hash (record->ha) value.
+---
+ xdiff/xpatience.c |   23 +++++++++++------------
+ xdiff/xprepare.c  |    9 +++++----
+ 2 files changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/xdiff/xpatience.c b/xdiff/xpatience.c
+index fdd7d02..c8c44a8 100644
+--- a/xdiff/xpatience.c
++++ b/xdiff/xpatience.c
+@@ -63,6 +63,7 @@ struct hashmap {
+ 		 */
+ 		struct entry *next, *previous;
+ 	} *entries, *first, *last;
++	int key_shift;
+ 	/* were common records found? */
+ 	unsigned long has_matches;
+ 	mmfile_t *file1, *file2;
+@@ -76,17 +77,9 @@ static void insert_record(int line, struct hashmap *map, int pass)
+ 	xrecord_t **records = pass == 1 ?
+ 		map->env->xdf1.recs : map->env->xdf2.recs;
+ 	xrecord_t *record = records[line - 1], *other;
+-	/*
+-	 * After xdl_prepare_env() (or more precisely, due to
+-	 * xdl_classify_record()), the "ha" member of the records (AKA lines)
+-	 * is _not_ the hash anymore, but a linearized version of it.  In
+-	 * other words, the "ha" member is guaranteed to start with 0 and
+-	 * the second record's ha can only be 0 or 1, etc.
+-	 *
+-	 * So we multiply ha by 2 in the hope that the hashing was
+-	 * "unique enough".
+-	 */
+-	int index = (int)((record->ha << 1) % map->alloc);
++
++	int count = 0;
++	unsigned int index = xdl_table_key(record->ha, map->key_shift);
+ 
+ 	while (map->entries[index].line1) {
+ 		other = map->env->xdf1.recs[map->entries[index].line1 - 1];
+@@ -94,6 +87,8 @@ static void insert_record(int line, struct hashmap *map, int pass)
+ 				!xdl_recmatch(record->ptr, record->size,
+ 					other->ptr, other->size,
+ 					map->xpp->flags)) {
++			if (++count >= map->alloc)
++				return;
+ 			if (++index >= map->alloc)
+ 				index = 0;
+ 			continue;
+@@ -132,13 +127,17 @@ static int fill_hashmap(mmfile_t *file1, mmfile_t *file2,
+ 		struct hashmap *result,
+ 		int line1, int count1, int line2, int count2)
+ {
++	int tbits;
++
+ 	result->file1 = file1;
+ 	result->file2 = file2;
+ 	result->xpp = xpp;
+ 	result->env = env;
+ 
+ 	/* We know exactly how large we want the hash map */
+-	result->alloc = count1 * 2;
++	tbits = xdl_table_bits(count1);
++	result->alloc = xdl_table_size(tbits);
++	result->key_shift = xdl_table_key_shift(tbits);
+ 	result->entries = (struct entry *)
+ 		xdl_malloc(result->alloc * sizeof(struct entry));
+ 	if (!result->entries)
+diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
+index 1689085..04060af 100644
+--- a/xdiff/xprepare.c
++++ b/xdiff/xprepare.c
+@@ -51,7 +51,7 @@ typedef struct s_xdlclassifier {
+ static int xdl_init_classifier(xdlclassifier_t *cf, long size, long flags);
+ static void xdl_free_classifier(xdlclassifier_t *cf);
+ static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned int hbits,
+-			       xrecord_t *rec);
++			       xrecord_t *rec, xpparam_t const *xpp);
+ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+ 			   xdlclassifier_t *cf, xdfile_t *xdf);
+ static void xdl_free_ctx(xdfile_t *xdf);
+@@ -97,7 +97,7 @@ static void xdl_free_classifier(xdlclassifier_t *cf) {
+ 
+ 
+ static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned int hbits,
+-			       xrecord_t *rec) {
++			       xrecord_t *rec, xpparam_t const *xpp) {
+ 	long hi;
+ 	char const *line;
+ 	xdlclass_t *rcrec;
+@@ -123,7 +123,8 @@ static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned
+ 		cf->rchash[hi] = rcrec;
+ 	}
+ 
+-	rec->ha = (unsigned long) rcrec->idx;
++	if (!(xpp->flags & XDF_PATIENCE_DIFF))
++		rec->ha = (unsigned long) rcrec->idx;
+ 
+ 	hi = (long) XDL_HASHLONG(rec->ha, hbits);
+ 	rec->next = rhash[hi];
+@@ -200,7 +201,7 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+ 			crec->ha = hav;
+ 			recs[nrec++] = crec;
+ 
+-			if (xdl_classify_record(cf, rhash, hbits, crec) < 0) {
++			if (xdl_classify_record(cf, rhash, hbits, crec, xpp) < 0) {
+ 
+ 				xdl_free(rhash);
+ 				xdl_free(recs);
+-- 
+1.7.6.12.g6486a.dirty
+

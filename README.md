@@ -106,6 +106,17 @@ These patches were a naive, line-to-line conversion of JGit's histogram
 diff implementation. You can see that information is stored as an
 integer bitmask, with shifts being used to read/write different fields.
 
+## ptr-v*
+
+These patches provided an implementation of the histogram diff algorithm
+based on structs, instead of bitmasks. This reduced the complexity of
+reading/writing of different fields and made code more readable.
+However, there was a noticeable performance penalty, which held me back
+from submitting these series. After running the code through a profiler,
+I managed to pin the problem down to excessive `malloc()`s.
+
+This implementation is the one that was submitted for inclusion.
+
 ## xd-v*
 
 These patches were an attempt at improving the C histogram diff

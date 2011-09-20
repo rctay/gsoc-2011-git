@@ -1,0 +1,37 @@
+From c2b9c2864a3905ada70a8709a637957146ae2733 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Wed, 29 Jun 2011 23:45:01 +0800
+Subject: [PATCH 15/35] fix tryLCS ends
+
+Due to way ends are handled, not necessarily one ahead.
+---
+ xdiff/xhistogram.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index b8a1b68..4161452 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -146,8 +146,8 @@ static int try_lcs(struct histindex *index, struct region *lcs, int b_ptr,
+ 			should_break = 0;
+ 			np = INDEX_NEXT(index, as);
+ 			bs = b_ptr;
+-			ae = as + 1;
+-			be = bs + 1;
++			ae = as;
++			be = bs;
+ 			rc = REC_CNT(rec);
+ 
+ 			while (line1 < as && line2 < bs
+@@ -167,7 +167,7 @@ static int try_lcs(struct histindex *index, struct region *lcs, int b_ptr,
+ 
+ 			if (b_next < be)
+ 				b_next = be;
+-			if (lcs->end1 - lcs->begin1 < ae - as || rc < index->cnt) {
++			if (lcs->end1 - lcs->begin1 + 1 < ae - as || rc < index->cnt) {
+ 				lcs->begin1 = as;
+ 				lcs->begin2 = bs;
+ 				lcs->end1 = ae;
+-- 
+1.7.6.12.g6486a.dirty
+

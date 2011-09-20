@@ -1,0 +1,26 @@
+From 313fd5d0bff3f3aeaf5b617869872e189cc9c511 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Wed, 29 Jun 2011 21:20:34 +0800
+Subject: [PATCH 13/37] handle possible "null" case
+
+---
+ xdiff/xhistogram.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index 814ebbf..9a2afc8 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -243,6 +243,9 @@ static int histogram_diff(struct histindex *index,
+ 	struct region lcs;
+ 	int result;
+ 
++	if (count1 <= 0 && count2 <= 0)
++		return 0;
++
+ 	if (!count1) {
+ 		while(count2--)
+ 			index->env->xdf2.rchg[line2++ - 1] = 1;
+-- 
+1.7.6.12.g6486a.dirty
+

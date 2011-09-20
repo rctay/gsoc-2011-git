@@ -1,0 +1,36 @@
+From 9e4381514b06c9513c3e4f74b7eac5bb3bc602c8 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Mon, 4 Jul 2011 18:40:46 +0800
+Subject: [PATCH 38/45] terminate earlier
+
+---
+ xdiff/xhistogram.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index 2418760..1089efb 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -245,6 +245,9 @@ static int histogram_diff(struct histindex *index,
+ 	if (count1 <= 0 && count2 <= 0)
+ 		return 0;
+ 
++	if (LINE_END(1) >= MAX_PTR)
++		return -1;
++
+ 	if (!count1) {
+ 		while(count2--)
+ 			index->env->xdf2.rchg[line2++ - 1] = 1;
+@@ -262,9 +265,6 @@ static int histogram_diff(struct histindex *index,
+ 	memset(index->records, 0, index->records_size * sizeof(struct record *));
+ 	memset(index->line_map, 0, index->line_map_size * sizeof(struct record *));
+ 
+-	if (LINE_END(1) >= MAX_PTR)
+-		return -1;
+-
+ 	memset(&lcs, 0, sizeof(lcs));
+ 	if (find_lcs(index, &lcs, line1, count1, line2, count2))
+ 		result = fall_back_to_classic_diff(index, line1, count1, line2, count2);
+-- 
+1.7.6.12.g6486a.dirty
+
