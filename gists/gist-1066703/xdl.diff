@@ -1,0 +1,57 @@
+diff --git a/xdiff/xmacros.h b/xdiff/xmacros.h
+index 165a895..51c29f6 100644
+--- a/xdiff/xmacros.h
++++ b/xdiff/xmacros.h
+@@ -31,9 +31,8 @@
+ #define XDL_ABS(v) ((v) >= 0 ? (v): -(v))
+ #define XDL_ISDIGIT(c) ((c) >= '0' && (c) <= '9')
+ #define XDL_ISSPACE(c) (isspace((unsigned char)(c)))
+-#define XDL_ADDBITS(v,b)	((v) + ((v) >> (b)))
+-#define XDL_MASKBITS(b)		((1UL << (b)) - 1)
+-#define XDL_HASHLONG(v,b)	(XDL_ADDBITS((unsigned long)(v), b) & XDL_MASKBITS(b))
++#define XDL_GOLDEN_RATIO_PRIME 0x9e370001UL
++#define XDL_HASHLONG(v,b)	(((unsigned int) (v * 0x9e370001UL)) >> (32-b))
+ #define XDL_PTRFREE(p) do { if (p) { xdl_free(p); (p) = NULL; } } while (0)
+ #define XDL_LE32_PUT(p, v) \
+ do { \
+diff --git a/xdiff/xutils.c b/xdiff/xutils.c
+index ab65034..f995962 100644
+--- a/xdiff/xutils.c
++++ b/xdiff/xutils.c
+@@ -310,11 +310,32 @@ unsigned long xdl_hash_record(char const **data, char const *top, long flags) {
+ }
+ 
+ 
+-unsigned int xdl_hashbits(unsigned int size) {
+-	unsigned int val = 1, bits = 0;
++/*
++ * From http://en.wikipedia.org/wiki/Binary_logarithm#Integer
++ */
++static int int_log2(unsigned int n)
++{
++	int pos = 0;
++
++	if (n == 0)
++		return -1;
++
++	if (n >= (1 <<16)) { n >>= 16; pos += 16; }
++	if (n >= (1 << 8)) { n >>=  8; pos +=  8; }
++	if (n >= (1 << 4)) { n >>=  4; pos +=  4; }
++	if (n >= (1 << 2)) { n >>=  2; pos +=  2; }
++	if (n >= (1 << 1)) {           pos +=  1; }
++	return pos;
++}
+ 
+-	for (; val < size && bits < CHAR_BIT * sizeof(unsigned int); val <<= 1, bits++);
+-	return bits ? bits: 1;
++unsigned int xdl_hashbits(unsigned int size)
++{
++	int bits = int_log2(size);
++	if (bits == -1)
++		bits = 1;
++	if (1 << bits < size)
++		bits++;
++	return bits;
+ }
+ 
+ 
