@@ -1,0 +1,68 @@
+From f6275df1385588f178a02f7d2fa87d67933da1d4 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Wed, 29 Jun 2011 00:36:47 +0800
+Subject: [PATCH 06/49] implement fallback
+
+---
+ xdiff/xhistogram.c |   17 +++++++++++++++--
+ 1 files changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index 2e5c3d6..48e68d3 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -255,10 +255,21 @@ static void reduce_common_start_end(struct histindex *index,
+ 	}
+ }
+ 
++static int fall_back_to_classic_diff(struct histindex *index,
++		int line1, int count1, int line2, int count2)
++{
++	xpparam_t xpp;
++	xpp.flags = index->xpp->flags & ~XDF_HISTOGRAM_DIFF;
++
++	return xdl_fall_back_diff(index->env, &xpp,
++				  line1, count1, line2, count2);
++}
++
+ static int histogram_diff(struct histindex *index,
+ 	int line1, int count1, int line2, int count2)
+ {
+ 	struct region lcs;
++	int result;
+ 
+ 	if (!count1) {
+ 		while(count2--)
+@@ -285,7 +296,7 @@ static int histogram_diff(struct histindex *index,
+ 
+ 	memset(&lcs, 0, sizeof(lcs));
+ 	if (find_lcs(index, &lcs, line1, count1, line2, count2))
+-		; /* TODO */
++		result = fall_back_to_classic_diff(index, line1, count1, line2, count2);
+ 	else {
+ 		if (region_type(&lcs) == LCS_EMPTY) {
+ 			int ptr;
+@@ -293,6 +304,7 @@ static int histogram_diff(struct histindex *index,
+ 				index->env->xdf1.rchg[line1 + ptr - 1] = 1;
+ 			for (ptr = 0; ptr < count2; ptr++)
+ 				index->env->xdf2.rchg[line2 + ptr - 1] = 1;
++			result = 0;
+ 		} else {
+ 			histogram_diff(index,
+ 				line1, lcs.begin1 - line1,
+@@ -300,10 +312,11 @@ static int histogram_diff(struct histindex *index,
+ 			histogram_diff(index,
+ 				lcs.end1, line1 + count1 - lcs.end1,
+ 				lcs.end2, line2 + count2 - lcs.end2);
++			result = 0;
+ 		}
+ 	}
+ 
+-	return 0;
++	return result;
+ }
+ 
+ int xdl_do_histogram_diff(mmfile_t *file1, mmfile_t *file2,
+-- 
+1.7.6.12.g6486a.dirty
+

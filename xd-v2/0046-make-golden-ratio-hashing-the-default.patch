@@ -1,0 +1,87 @@
+From 2b05114cec8ccd92013917438a4a553804dd2f06 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Mon, 4 Jul 2011 15:05:22 +0800
+Subject: [PATCH 46/49] make golden ratio hashing the default
+
+---
+ xdiff/xmacros.h |    2 +-
+ xdiff/xutils.c  |   35 -----------------------------------
+ xdiff/xutils.h  |    6 ------
+ 3 files changed, 1 insertions(+), 42 deletions(-)
+
+diff --git a/xdiff/xmacros.h b/xdiff/xmacros.h
+index 165a895..25541e7 100644
+--- a/xdiff/xmacros.h
++++ b/xdiff/xmacros.h
+@@ -33,7 +33,7 @@
+ #define XDL_ISSPACE(c) (isspace((unsigned char)(c)))
+ #define XDL_ADDBITS(v,b)	((v) + ((v) >> (b)))
+ #define XDL_MASKBITS(b)		((1UL << (b)) - 1)
+-#define XDL_HASHLONG(v,b)	(XDL_ADDBITS((unsigned long)(v), b) & XDL_MASKBITS(b))
++#define XDL_HASHLONG(v,b)	(((unsigned int) (v * 0x9e370001UL)) >> (32 - b))
+ #define XDL_PTRFREE(p) do { if (p) { xdl_free(p); (p) = NULL; } } while (0)
+ #define XDL_LE32_PUT(p, v) \
+ do { \
+diff --git a/xdiff/xutils.c b/xdiff/xutils.c
+index 4107416..ded7c32 100644
+--- a/xdiff/xutils.c
++++ b/xdiff/xutils.c
+@@ -433,38 +433,3 @@ int xdl_fall_back_diff(xdfenv_t *diff_env, xpparam_t const *xpp,
+ 
+ 	return 0;
+ }
+-
+-/*
+- * From http://en.wikipedia.org/wiki/Binary_logarithm#Integer
+- */
+-static int int_log2(unsigned int n)
+-{
+-	int pos;
+-
+-	if (n == 0)
+-		return -1;
+-
+-
+-	pos = 0;
+-	if (n >= (1 <<16)) { n >>= 16; pos += 16; }
+-	if (n >= (1 << 8)) { n >>=  8; pos +=  8; }
+-	if (n >= (1 << 4)) { n >>=  4; pos +=  4; }
+-	if (n >= (1 << 2)) { n >>=  2; pos +=  2; }
+-	if (n >= (1 << 1)) {           pos +=  1; }
+-	return pos;
+-}
+-
+-int xdl_table_bits(unsigned int size)
+-{
+-	int bits = int_log2(size);
+-	if (bits == 0)
+-		bits = 1;
+-	if (1 << bits < size)
+-		bits++;
+-	return bits;
+-}
+-
+-unsigned int xdl_table_key(unsigned long val, unsigned int key_shift)
+-{
+-	return ((unsigned int) (val * 0x9e370001UL)) >> key_shift;
+-}
+diff --git a/xdiff/xutils.h b/xdiff/xutils.h
+index f2d4db3..674a657 100644
+--- a/xdiff/xutils.h
++++ b/xdiff/xutils.h
+@@ -44,12 +44,6 @@ int xdl_emit_hunk_hdr(long s1, long c1, long s2, long c2,
+ int xdl_fall_back_diff(xdfenv_t *diff_env, xpparam_t const *xpp,
+ 		       int line1, int count1, int line2, int count2);
+ 
+-/* hash table - helpers to implement one */
+-int xdl_table_bits(unsigned int size);
+-unsigned int xdl_table_key(unsigned long val, unsigned int key_shift);
+-
+-#define xdl_table_size(tb) (1 << tb)
+-#define xdl_table_key_shift(tb) (32 - tb)
+ 
+ 
+ #endif /* #if !defined(XUTILS_H) */
+-- 
+1.7.6.12.g6486a.dirty
+

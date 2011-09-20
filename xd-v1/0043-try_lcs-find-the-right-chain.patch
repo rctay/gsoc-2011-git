@@ -1,0 +1,41 @@
+From 6cbf47edfba2ef65fbd6acc092fdc615a571ac79 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Mon, 4 Jul 2011 14:04:03 +0800
+Subject: [PATCH 43/45] try_lcs: find the right chain
+
+---
+ xdiff/xhistogram.c |   15 ++++++++++++++-
+ 1 files changed, 14 insertions(+), 1 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index d784502..19fd3d2 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -126,10 +126,23 @@ static int try_lcs(struct histindex *index, struct region *lcs, int b_ptr,
+ 	long line1, long count1, long line2, long count2)
+ {
+ 	unsigned int b_next = b_ptr + 1;
+-	xrecord_t *rec = table_hash(index, 1, index->env->xdf2.recs[b_ptr - 1]->ha);
++	xrecord_t *brec = index->env->xdf2.recs[b_ptr - 1];
++	xrecord_t *rec = table_hash(index, 1, brec->ha);
+ 	unsigned int as, ae, bs, be, np, rc;
+ 	int should_break;
+ 
++	while (rec
++		&& rec->ha != brec->ha
++		&& !xdl_recmatch(rec->ptr, rec->size,
++				 brec->ptr, brec->size, index->xpp->flags)) {
++		rec = rec->head->next;
++	}
++
++	if (!rec)
++		return b_next;
++
++	rec = rec->head;
++
+ 	for (; rec; rec = rec->next) {
+ 		if (get_cnt(index, rec->line_number) > index->cnt) {
+ 			if (!index->has_common)
+-- 
+1.7.6.12.g6486a.dirty
+

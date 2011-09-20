@@ -1,0 +1,25 @@
+From 07ee3d27921d99404728dbc975a1c7810ff36054 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 3 Jul 2011 11:37:13 +0800
+Subject: [PATCH 39/45] xprepare: fix count bug
+
+---
+ xdiff/xprepare.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
+index 25e326d..f56ca1f 100644
+--- a/xdiff/xprepare.c
++++ b/xdiff/xprepare.c
+@@ -132,7 +132,7 @@ static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned
+ 		rec->head = rhash + hi;
+ 		if (rec->head[0]) {
+ 			rec->head[0]->previous = rec;
+-			rec->count = rec->head[0]->count;
++			rec->count = rec->head[0]->count + 1;
+ 		} else
+ 			rec->count = 1;
+ 	}
+-- 
+1.7.6.12.g6486a.dirty
+

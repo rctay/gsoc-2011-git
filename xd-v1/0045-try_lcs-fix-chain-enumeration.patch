@@ -1,0 +1,57 @@
+From 891e870bb56436e007dd121cb4eff724230bafa5 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Mon, 4 Jul 2011 14:32:49 +0800
+Subject: [PATCH 45/45] try_lcs: fix chain enumeration
+
+---
+ xdiff/xhistogram.c |   19 ++++++++++++++++---
+ 1 files changed, 16 insertions(+), 3 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index c82d496..b663e16 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -142,17 +142,25 @@ static int try_lcs(struct histindex *index, struct region *lcs, int b_ptr,
+ 		return b_next;
+ 
+ 	rec = rec->head;
++	while (rec
++		&& rec->line_number < line1
++		&& rec->previous
++		&& rec->previous->head == rec->head)
++		rec = rec->previous;
++
++	if (rec && rec->line_number < line1)
++		return b_next;
+ 
+-	for (; rec; rec = rec->next) {
++	while (rec && rec->line_number <= LINE_END(1)) {
+ 		if (get_cnt(index, rec->line_number) > index->cnt) {
+ 			if (!index->has_common)
+ 				index->has_common = cmp(index, 1, rec->line_number, 2, b_ptr);
+-			continue;
++			goto continue_try_lcs;
+ 		}
+ 
+ 		as = rec->line_number;
+ 		if (!cmp(index, 1, as, 2, b_ptr))
+-			continue;
++			goto continue_try_lcs;
+ 
+ 		index->has_common = 1;
+ 		for (;;) {
+@@ -204,6 +212,11 @@ static int try_lcs(struct histindex *index, struct region *lcs, int b_ptr,
+ 
+ 			as = np;
+ 		}
++continue_try_lcs:
++		if (!rec->previous
++			|| rec->previous->head != rec->head)
++			break;
++		rec = rec->previous;
+ 	}
+ 	return b_next;
+ }
+-- 
+1.7.6.12.g6486a.dirty
+

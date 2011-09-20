@@ -1,0 +1,25 @@
+From 524c9d0a3666509106fd759940558a24d601f4ca Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Mon, 4 Jul 2011 14:32:09 +0800
+Subject: [PATCH 44/49] scanA: ensure that curr->line_number doesn't exceed
+
+---
+ xdiff/xhistogram.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index 19fd3d2..c82d496 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -87,7 +87,7 @@ static int scanA(struct histindex *index, long line1, long count1)
+ 			curr = tail;
+ 			prev = NULL;
+ 			chain_len = 0;
+-			while (curr && curr->line_number >= line1) {
++			while (curr && line1 <= curr->line_number && curr->line_number <= LINE_END(1)) {
+ 				LINE_MAP(index, curr->line_number).ptr = prev ? prev->line_number : 0;
+ 				LINE_MAP(index, curr->line_number).cnt = tail->count - curr->count + 1;
+ 
+-- 
+1.7.6.12.g6486a.dirty
+

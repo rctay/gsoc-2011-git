@@ -1,0 +1,29 @@
+From 5f27318ba327e6a404d3e1b4aa86fb6c6b90d0e0 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Fri, 1 Jul 2011 00:34:15 +0800
+Subject: [PATCH 23/45] be consistent in rc order
+
+---
+ xdiff/xhistogram.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index ed9db74..ce8cd9c 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -158,10 +158,10 @@ static int try_lcs(struct histindex *index, struct region *lcs, int b_ptr,
+ 			}
+ 			while (ae < LINE_END(1) && be < LINE_END(2)
+ 				&& cmp(index, 1, ae+1, 2, be+1)) {
+-				if (1 < rc)
+-					rc = XDL_MIN(rc, REC_CNT(index->recs[INDEX_REC_IDXS(index, ae)]));
+ 				ae++;
+ 				be++;
++				if (1 < rc)
++					rc = XDL_MIN(rc, REC_CNT(index->recs[INDEX_REC_IDXS(index, ae)]));
+ 			}
+ 
+ 			if (b_next < be)
+-- 
+1.7.6.12.g6486a.dirty
+

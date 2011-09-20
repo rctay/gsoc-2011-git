@@ -1,0 +1,67 @@
+From 9eb02331748b16e4bdf27ae441c5bf86c848291c Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 3 Jul 2011 11:54:09 +0800
+Subject: [PATCH 38/49] xprepare: prepare to support histogram
+
+---
+ xdiff/xprepare.c |   12 ++++++++++++
+ xdiff/xtypes.h   |    6 +++++-
+ 2 files changed, 17 insertions(+), 1 deletions(-)
+
+diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
+index b9b81ab..25e326d 100644
+--- a/xdiff/xprepare.c
++++ b/xdiff/xprepare.c
+@@ -127,6 +127,16 @@ static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned
+ 		rec->ha = (unsigned long) rcrec->idx;
+ 
+ 	hi = (long) XDL_HASHLONG(rec->ha, hbits);
++
++	if (xpp->flags & XDF_HISTOGRAM_DIFF) {
++		rec->head = rhash + hi;
++		if (rec->head[0]) {
++			rec->head[0]->previous = rec;
++			rec->count = rec->head[0]->count;
++		} else
++			rec->count = 1;
++	}
++
+ 	rec->next = rhash[hi];
+ 	rhash[hi] = rec;
+ 
+@@ -197,10 +207,12 @@ static int xdl_prepare_ctx(mmfile_t *mf, int side, long narec, xpparam_t const *
+ 				xdl_cha_free(&xdf->rcha);
+ 				return -1;
+ 			}
++			crec->previous = NULL;
+ 			crec->ptr = prev;
+ 			crec->size = (long) (cur - prev);
+ 			crec->ha = hav;
+ 			recs[nrec++] = crec;
++			crec->line_number = nrec;
+ 
+ 			if ((xpp->flags & XDF_HISTOGRAM_DIFF) && side == 2)
+ 				/* skip classification for file2 */
+diff --git a/xdiff/xtypes.h b/xdiff/xtypes.h
+index 2511aef..533ac86 100644
+--- a/xdiff/xtypes.h
++++ b/xdiff/xtypes.h
+@@ -39,10 +39,14 @@ typedef struct s_chastore {
+ } chastore_t;
+ 
+ typedef struct s_xrecord {
+-	struct s_xrecord *next;
++	struct s_xrecord *next, *previous;
+ 	char const *ptr;
+ 	long size;
+ 	unsigned long ha;
++
++	struct s_xrecord **head;
++	long count;
++	long line_number;
+ } xrecord_t;
+ 
+ typedef struct s_xdfile {
+-- 
+1.7.6.12.g6486a.dirty
+

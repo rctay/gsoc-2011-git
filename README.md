@@ -106,6 +106,14 @@ These patches were a naive, line-to-line conversion of JGit's histogram
 diff implementation. You can see that information is stored as an
 integer bitmask, with shifts being used to read/write different fields.
 
+## xd-v*
+
+These patches were an attempt at improving the C histogram diff
+implementation by reducing the calls to scanA() (the step that builds
+the occurrence table) for each recursive sub-diff. This, of course,
+ramped up the complexity of the code, but the performance gains were
+minimal, so I junked this in the end.
+
 ## guilt
 
 Behind the scenes, I used [guilt] [guilt] to manage changes to my
