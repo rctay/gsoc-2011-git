@@ -1,0 +1,25 @@
+From fb3fce8f281edec0fef38fb308ca4f7c4e2aacbf Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Fri, 1 Jul 2011 17:44:44 +0800
+Subject: [PATCH 28/41] fix important bug
+
+---
+ xdiff/xhistogram.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index e4792d1..6676c48 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -79,7 +79,7 @@ static int scanA(struct histindex *index, int line1, int count1)
+ 					xdl_malloc(sizeof(struct record))))
+ 					return -1;
+ 				new_rec->ptr = ptr;
+-				new_cnt = rec->ptr + 1;
++				new_cnt = rec->cnt + 1;
+ 				if (new_cnt > MAX_CNT)
+ 					new_cnt = MAX_CNT;
+ 				new_rec->cnt = new_cnt;
+-- 
+1.7.6.12.g6486a.dirty
+

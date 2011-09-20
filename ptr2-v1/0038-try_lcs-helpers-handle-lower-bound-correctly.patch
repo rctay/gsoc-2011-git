@@ -1,0 +1,38 @@
+From d9e16b99845bcb23a6063f5e1caad19073496b1f Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sat, 2 Jul 2011 01:34:46 +0800
+Subject: [PATCH 38/41] try_lcs() helpers: handle lower bound correctly
+
+---
+ xdiff/xhistogram.c |    8 ++------
+ 1 files changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index b053911..23cbb30 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -119,9 +119,7 @@ static int get_next_ptr(struct histindex *index, int line1, int count1, int ptr)
+ 	if (rec) {
+ 		rec = rec->next;
+ 		while (rec) {
+-			if (rec->ptr < line1)
+-				break;
+-			if (rec->ptr <= LINE_END(1))
++			if (line1 <= rec->ptr && rec->ptr <= LINE_END(1))
+ 				return rec->ptr;
+ 			rec = rec->next;
+ 		}
+@@ -135,9 +133,7 @@ static void get_slice(struct record *rec,
+ {
+ 	*first = *last = NULL;
+ 	while (rec) {
+-		if (rec->ptr < line1)
+-			break;
+-		if (rec->ptr <= LINE_END(1)) {
++		if (line1 <= rec->ptr && rec->ptr <= LINE_END(1)) {
+ 			if (!*first)
+ 				*first = rec;
+ 			*last = rec->next;
+-- 
+1.7.6.12.g6486a.dirty
+

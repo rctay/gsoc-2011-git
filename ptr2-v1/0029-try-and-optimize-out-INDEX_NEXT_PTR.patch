@@ -1,0 +1,46 @@
+From 7b65732c2d55cd03527fe761122f28a410ec3416 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Fri, 1 Jul 2011 17:53:59 +0800
+Subject: [PATCH 29/41] try and optimize out INDEX_NEXT_PTR
+
+---
+ xdiff/xhistogram.c |    9 +++++----
+ 1 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index 6676c48..b63f5ef 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -122,7 +122,7 @@ static int try_lcs(struct histindex *index, struct region *lcs, int b_ptr,
+ 	int line1, int count1, int line2, int count2)
+ {
+ 	unsigned int b_next = b_ptr + 1;
+-	struct record *rec = index->records[table_hash(index, 2, b_ptr)];
++	struct record *rec = index->records[table_hash(index, 2, b_ptr)], *rec_ahead;
+ 	unsigned int as, ae, bs, be, np, rc;
+ 	int should_break;
+ 
+@@ -140,7 +140,8 @@ static int try_lcs(struct histindex *index, struct region *lcs, int b_ptr,
+ 		index->has_common = 1;
+ 		for (;;) {
+ 			should_break = 0;
+-			np = INDEX_NEXT(index, as).ptr;
++			rec_ahead = INDEX_NEXT(index, as).rec->next;
++			np = rec_ahead ? rec_ahead->ptr : 0;
+ 			bs = b_ptr;
+ 			ae = as;
+ 			be = bs;
+@@ -175,8 +176,8 @@ static int try_lcs(struct histindex *index, struct region *lcs, int b_ptr,
+ 				break;
+ 
+ 			while (np < ae) {
+-				np = INDEX_NEXT(index, np).ptr;
+-				if (np == 0) {
++				rec_ahead = rec_ahead->next;
++				if (!rec_ahead || (np = rec_ahead->ptr) == 0) {
+ 					should_break = 1;
+ 					break;
+ 				}
+-- 
+1.7.6.12.g6486a.dirty
+

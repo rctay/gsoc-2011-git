@@ -1,0 +1,24 @@
+From 14faad72038b68ecabb3befa2870ac9c8c6b455d Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sat, 2 Jul 2011 10:59:29 +0800
+Subject: [PATCH 41/41] gen_cnt: fix last un-init
+
+---
+ xdiff/xhistogram.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index bdc440d..7413e04 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -147,6 +147,7 @@ static int get_cnt(struct histindex *index, int line1, int count1, int ptr)
+ 	struct record *rec_ptr, *rec, *last;
+ 	rec_ptr = LINE_MAP(index, ptr);
+ 	rec = *(rec_ptr->head);
++	last = NULL;
+ 	while (rec) {
+ 		if (line1 <= rec->ptr) {
+ 			if (rec->ptr > LINE_END(1))
+-- 
+1.7.6.12.g6486a.dirty
+

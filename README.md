@@ -125,6 +125,10 @@ the occurrence table) for each recursive sub-diff. This, of course,
 ramped up the complexity of the code, but the performance gains were
 minimal, so I junked this in the end.
 
+## ptr2-v1
+
+Like xd-v*; this was an initial try at reducing scanA() calls.
+
 ## guilt
 
 Behind the scenes, I used [guilt] [guilt] to manage changes to my

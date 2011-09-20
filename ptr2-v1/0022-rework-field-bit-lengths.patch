@@ -1,0 +1,31 @@
+From 36bd072957e3e20e83be84e7722e2a0f5a64a518 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Thu, 30 Jun 2011 16:44:57 +0800
+Subject: [PATCH 22/41] rework field bit lengths
+
+---
+ xdiff/xhistogram.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index 10b77d7..ed9db74 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -2,10 +2,10 @@
+ #include "xtypes.h"
+ #include "xdiff.h"
+ 
+-#define REC_NEXT_SHIFT	(28 + 8)
+-#define REC_PTR_SHIFT	8
+-#define REC_PTR_MASK	((1 << 28) - 1)
+-#define REC_CNT_MASK	((1 << 8) - 1)
++#define REC_NEXT_SHIFT	(12 + 6)
++#define REC_PTR_SHIFT	(6)
++#define REC_PTR_MASK	((1 << 12) - 1)
++#define REC_CNT_MASK	((1 << 6) - 1)
+ #define MAX_PTR		REC_PTR_MASK
+ #define MAX_CNT		REC_CNT_MASK
+ 
+-- 
+1.7.6.12.g6486a.dirty
+

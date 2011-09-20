@@ -1,0 +1,27 @@
+From a3b477679241419d94ab0cf3b4d1ef4a90645942 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Wed, 29 Jun 2011 21:04:02 +0800
+Subject: [PATCH 10/41] fix recursion step
+
+---
+ xdiff/xhistogram.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index 0cdeae9..3e770a7 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -281,8 +281,8 @@ static int histogram_diff(struct histindex *index,
+ 				line1, lcs.begin1 - line1,
+ 				line2, lcs.begin2 - line2);
+ 			histogram_diff(index,
+-				lcs.end1, line1 + count1 - lcs.end1,
+-				lcs.end2, line2 + count2 - lcs.end2);
++				lcs.end1 + 1, LINE_END(line1, count1) - lcs.end1,
++				lcs.end2 + 1, LINE_END(line2, count2) - lcs.end2);
+ 			result = 0;
+ 		}
+ 	}
+-- 
+1.7.6.12.g6486a.dirty
+

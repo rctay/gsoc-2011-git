@@ -1,0 +1,25 @@
+From 8cecf710026e1af103cd3d9fc3133441b39e93d4 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Thu, 30 Jun 2011 16:44:10 +0800
+Subject: [PATCH 20/41] remove useless statement
+
+---
+ xdiff/xhistogram.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index 2aa4128..b0821a4 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -127,7 +127,7 @@ static int try_lcs(struct histindex *index, struct region *lcs, int b_ptr,
+ 	unsigned int as, ae, bs, be, np, rc;
+ 	int should_break;
+ 
+-	for (rec; rec_idx != 0; rec_idx = REC_NEXT(rec)) {
++	for (; rec_idx != 0; rec_idx = REC_NEXT(rec)) {
+ 		rec = index->recs[rec_idx];
+ 
+ 		if (REC_CNT(rec) > index->cnt) {
+-- 
+1.7.6.12.g6486a.dirty
+

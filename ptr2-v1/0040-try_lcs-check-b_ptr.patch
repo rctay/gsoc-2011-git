@@ -1,0 +1,27 @@
+From e34fbb938441f6e74ad95c976cd873b6e592dfc3 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sat, 2 Jul 2011 07:27:57 +0800
+Subject: [PATCH 40/41] try_lcs: check b_ptr
+
+---
+ xdiff/xhistogram.c |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index 986383f..bdc440d 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -170,6 +170,10 @@ static int try_lcs(struct histindex *index, struct region *lcs, int b_ptr,
+ 	int should_break;
+ 
+ 	for (; rec; rec = rec->next) {
++		if (rec->ptr < line1)
++			continue;
++		if (rec->ptr > LINE_END(1))
++			break;
+ 		if (rec->cnt > index->cnt) {
+ 			if (!index->has_common)
+ 				index->has_common = cmp(index, 1, rec->ptr, 2, b_ptr);
+-- 
+1.7.6.12.g6486a.dirty
+
