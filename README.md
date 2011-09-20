@@ -135,6 +135,20 @@ Behind the scenes, I used [guilt] [guilt] to manage changes to my
 patches. The folder contains a dump of my .git/patches/ repo (also
 available in this repo at the [guilt/gsoc-diff branch] [guilt branch].
 
+## gists/gist-*
+
+* [gist: 1063164 [gsoc-diff] numbers] (https://gist.github.com/1063164)
+* [gist: 1063175 [gsoc-diff] more numbers] (https://gist.github.com/1063175)
+* [gist: 1066703 [gsoc-diff] alternate hashing ("golden ratio")] (https://gist.github.com/1066703)
+* [gist: 1066773 [gsoc-diff] try_lcs: skip chains] (https://gist.github.com/1066773)
+* [gist: 1066906 [gsoc-diff] diff --assume-text] (https://gist.github.com/1066906)
+* [gist: 1068912 [gsoc-diff] malloc()/free() once] (https://gist.github.com/1068912)
+* [gist: 1069099 [gsoc-diff] reduce number of rec accesses] (https://gist.github.com/1069099)
+* [gist: 1074709 [gsoc-diff] reduce number of mallocs for gd-ptr] (https://gist.github.com/1074709)
+* [gist: 1098863 [gsoc-diff] make trim tail support context] (https://gist.github.com/1098863)
+* [gist: 1099236 [gsoc-diff] skip hashing of common leading lines] (https://gist.github.com/1099236)
+* [gist: 1099515 [gsoc-diff] xdl_trim_head()] (https://gist.github.com/1099515)
+
 # Related
 
 Towards the close of the gsoc coding period, there was [a thread] [1] on
