@@ -135,6 +135,15 @@ Behind the scenes, I used [guilt] [guilt] to manage changes to my
 patches. The folder contains a dump of my .git/patches/ repo (also
 available in this repo at the [guilt/master branch] [guilt master].
 
+## guilt/trim-ends
+
+I toyed with the idea of skipping hashing of common head and tail lines
+for a performance gain. However, as I worked on another diff-related
+issue (see 'Related'), I began to doubt the correctness of this.
+
+This series is still a work-in-progress and has not been submitted for
+inclusion.
+
 ## gists/gist-*
 
 * [gist: 1063164 [gsoc-diff] numbers] (https://gist.github.com/1063164)
