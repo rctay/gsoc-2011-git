@@ -129,11 +129,11 @@ minimal, so I junked this in the end.
 
 Like xd-v*; this was an initial try at reducing scanA() calls.
 
-## guilt
+## guilt/master
 
 Behind the scenes, I used [guilt] [guilt] to manage changes to my
 patches. The folder contains a dump of my .git/patches/ repo (also
-available in this repo at the [guilt/gsoc-diff branch] [guilt branch].
+available in this repo at the [guilt/master branch] [guilt master].
 
 ## gists/gist-*
 
@@ -159,4 +159,4 @@ gsoc, I managed to diagnose the problem and [submitted a patch] [2].
 [1]: http://mid.gmane.org/loom.20110809T093124-847@post.gmane.org
 [2]: http://mid.gmane.org/1313464312-5132-1-git-send-email-rctay89@gmail.com
 [guilt]: http://www.kernel.org/pub/linux/kernel/people/jsipek/guilt/
-[guilt branch]: https://github.com/rctay/gsoc-2011-git/tree/guilt/gsoc-diff
+[guilt master]: https://github.com/rctay/gsoc-2011-git/tree/guilt/master
