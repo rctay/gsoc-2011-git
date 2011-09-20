@@ -1,0 +1,15 @@
+From bc6c6e08c9ec273558dd4fe8221b2c29b56bad51 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 22:02:35 +0800
+Subject: [PATCH 065/130] add skip-classify
+
+---
+ 0 files changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 guilt/gsoc-diff/skip-classify
+
+diff --git a/guilt/gsoc-diff/skip-classify b/guilt/gsoc-diff/skip-classify
+new file mode 100644
+index 0000000..e69de29
+-- 
+1.7.4.msysgit.0
+

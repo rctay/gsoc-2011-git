@@ -1,0 +1,24 @@
+From 99e5e07f40a583e7bdca9b52283676fc1f401d01 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Wed, 10 Aug 2011 06:42:41 +0800
+Subject: [PATCH 123/130] add provide-memrchr
+
+---
+ guilt/gsoc-diff/series          |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+ create mode 100644 guilt/gsoc-diff/provide-memrchr
+
+diff --git a/guilt/gsoc-diff/provide-memrchr b/guilt/gsoc-diff/provide-memrchr
+new file mode 100644
+index 0000000..e69de29
+diff --git a/guilt/gsoc-diff/series b/guilt/gsoc-diff/series
+index a8fdc4c..d6a52df 100644
+--- a/guilt/gsoc-diff/series
++++ b/guilt/gsoc-diff/series
+@@ -1,2 +1,3 @@
+ add-memrchr
++provide-memrchr
+ trim-ends
+-- 
+1.7.4.msysgit.0
+

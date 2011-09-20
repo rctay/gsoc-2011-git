@@ -1,0 +1,51 @@
+From e4fd5dc9e90f395c56d719d5554b95723928ec67 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Wed, 10 Aug 2011 06:41:20 +0800
+Subject: [PATCH 122/130] import e1bb1d0
+
+---
+ guilt/gsoc-diff/add-memrchr |   34 ++++++++++++++++++++++++++++++++++
+ 1 files changed, 34 insertions(+), 0 deletions(-)
+
+diff --git a/guilt/gsoc-diff/add-memrchr b/guilt/gsoc-diff/add-memrchr
+index e69de29..8cbbf42 100644
+--- a/guilt/gsoc-diff/add-memrchr
++++ b/guilt/gsoc-diff/add-memrchr
+@@ -0,0 +1,34 @@
++diff --git a/git-compat-util.h b/git-compat-util.h
++index e0bb81e..e23351c 100644
++--- a/git-compat-util.h
+++++ b/git-compat-util.h
++@@ -385,6 +385,9 @@ extern int git_vsnprintf(char *str, size_t maxsize,
++ #define HAVE_STRCHRNUL
++ #define HAVE_MEMPCPY
++ #endif
+++#if __GLIBC_PREREQ(2, 2)
+++#define HAVE_MEMRCHR
+++#endif
++ #endif
++ 
++ #ifndef HAVE_STRCHRNUL
++@@ -405,6 +408,19 @@ static inline void *gitmempcpy(void *dest, const void *src, size_t n)
++ }
++ #endif
++ 
+++#ifndef HAVE_MEMRCHR
+++#define memrchr gitmemrchr
+++static inline void *gitmemrchr(const void *s, int c, size_t n)
+++{
+++	const unsigned char *p = s;
+++	p += n;
+++	while (p != s)
+++		if (*--p == (unsigned char) c)
+++			return (void *)p;
+++	return NULL;
+++}
+++#endif
+++
++ #ifdef NO_INET_PTON
++ int inet_pton(int af, const char *src, void *dst);
++ #endif
+-- 
+1.7.4.msysgit.0
+

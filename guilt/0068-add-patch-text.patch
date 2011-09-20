@@ -1,0 +1,31 @@
+From 858d76d3b89d720cc6a995b578d165ca86a6ac52 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 22:07:27 +0800
+Subject: [PATCH 068/130] add patch text
+
+---
+ guilt/gsoc-diff/skip-classify |   11 +++++++++++
+ 1 files changed, 11 insertions(+), 0 deletions(-)
+
+diff --git a/guilt/gsoc-diff/skip-classify b/guilt/gsoc-diff/skip-classify
+index 6aa5b9d..371d153 100644
+--- a/guilt/gsoc-diff/skip-classify
++++ b/guilt/gsoc-diff/skip-classify
+@@ -1,3 +1,14 @@
++xdiff/xprepare: skip classification
++
++xdl_classify_record() replaces the hash member (xrecord_t.ha) with a
++unique identifier of the record/line, such that the hashes are
++"linearized" (as Dscho calls it in xpatience.c).
++
++We don't want that in histogram diff, so turn it off.
++
++This gives us a small boost in performance.
++
++Signed-off-by: Tay Ray Chuan <rctay89@gmail.com>
+ diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
+ index 3ebad0f..98861ff 100644
+ --- a/xdiff/xprepare.c
+-- 
+1.7.4.msysgit.0
+

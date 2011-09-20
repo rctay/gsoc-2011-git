@@ -1,0 +1,93 @@
+From 80acbd3bbb9897be24266959687127f10b932ce1 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 22:16:04 +0800
+Subject: [PATCH 072/130] Revert "add hunks from b06e4b33 -- xdiff/xprepare.c"
+
+xdl_classify_record() isn't called anyway, so we don't need to pass it
+xpp.
+
+Conflicts:
+
+    xdiff/xprepare.c
+---
+ guilt/gsoc-diff/skip-classify |   40 ++++++----------------------------------
+ 1 files changed, 6 insertions(+), 34 deletions(-)
+
+diff --git a/guilt/gsoc-diff/skip-classify b/guilt/gsoc-diff/skip-classify
+index 848655a..da0d8ca 100644
+--- a/guilt/gsoc-diff/skip-classify
++++ b/guilt/gsoc-diff/skip-classify
+@@ -13,38 +13,10 @@ This gives us a small boost in performance.
+ 
+ Signed-off-by: Tay Ray Chuan <rctay89@gmail.com>
+ diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
+-index 3ebad0f..8dea5ab 100644
++index 3ebad0f..4770107 100644
+ --- a/xdiff/xprepare.c
+ +++ b/xdiff/xprepare.c
+-@@ -51,7 +51,7 @@ typedef struct s_xdlclassifier {
+- static int xdl_init_classifier(xdlclassifier_t *cf, long size, long flags);
+- static void xdl_free_classifier(xdlclassifier_t *cf);
+- static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned int hbits,
+--			       xrecord_t *rec);
+-+			       xrecord_t *rec, xpparam_t const *xpp);
+- static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+- 			   xdlclassifier_t *cf, xdfile_t *xdf);
+- static void xdl_free_ctx(xdfile_t *xdf);
+-@@ -94,7 +94,7 @@ static void xdl_free_classifier(xdlclassifier_t *cf) {
+- 
+- 
+- static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned int hbits,
+--			       xrecord_t *rec) {
+-+			       xrecord_t *rec, xpparam_t const *xpp) {
+- 	long hi;
+- 	char const *line;
+- 	xdlclass_t *rcrec;
+-@@ -120,7 +120,8 @@ static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned
+- 		cf->rchash[hi] = rcrec;
+- 	}
+- 
+--	rec->ha = (unsigned long) rcrec->idx;
+-+	if (!(xpp->flags & XDF_HISTOGRAM_DIFF))
+-+		rec->ha = (unsigned long) rcrec->idx;
+- 
+- 	hi = (long) XDL_HASHLONG(rec->ha, hbits);
+- 	rec->next = rhash[hi];
+-@@ -154,11 +155,15 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
++@@ -154,11 +154,15 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+  	if (!(recs = (xrecord_t **) xdl_malloc(narec * sizeof(xrecord_t *))))
+  		goto abort;
+  
+@@ -65,17 +37,17 @@ index 3ebad0f..8dea5ab 100644
+  
+  	nrec = 0;
+  	if ((cur = blk = xdl_mmfile_first(mf, &bsize)) != NULL) {
+-@@ -178,7 +183,8 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
++@@ -178,7 +182,8 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+  			crec->ha = hav;
+  			recs[nrec++] = crec;
+  
+ -			if (xdl_classify_record(cf, rhash, hbits, crec) < 0)
+ +			if (!(xpp->flags & XDF_HISTOGRAM_DIFF) &&
+-+				xdl_classify_record(cf, rhash, hbits, crec, xpp) < 0)
+++				xdl_classify_record(cf, rhash, hbits, crec) < 0)
+  				goto abort;
+  		}
+  	}
+-@@ -235,7 +241,8 @@ int xdl_prepare_env(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
++@@ -235,7 +240,8 @@ int xdl_prepare_env(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
+  	enl1 = xdl_guess_lines(mf1) + 1;
+  	enl2 = xdl_guess_lines(mf2) + 1;
+  
+@@ -85,7 +57,7 @@ index 3ebad0f..8dea5ab 100644
+  
+  		return -1;
+  	}
+-@@ -252,9 +259,10 @@ int xdl_prepare_env(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
++@@ -252,9 +258,10 @@ int xdl_prepare_env(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
+  		return -1;
+  	}
+  
+-- 
+1.7.4.msysgit.0
+

@@ -1,0 +1,46 @@
+From 627d3deb50f41584c618b1bc385aa3417a0dd339 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:44:28 +0800
+Subject: [PATCH 023/130] fix tryLCS ends
+
+Due to way ends are handled, not necessarily one ahead.
+---
+ guilt/gsoc-diff/teach-histogram |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index 87854f4..fdee0f4 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -95,7 +95,7 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..55e2d17
++index 0000000..291eb0b
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+ @@ -0,0 +1,338 @@
+@@ -244,8 +244,8 @@ index 0000000..55e2d17
+ +			should_break = 0;
+ +			np = INDEX_NEXT(index, as);
+ +			bs = b_ptr;
+-+			ae = as + 1;
+-+			be = bs + 1;
+++			ae = as;
+++			be = bs;
+ +			rc = REC_CNT(rec);
+ +
+ +			while (line1 < as && line2 < bs
+@@ -265,7 +265,7 @@ index 0000000..55e2d17
+ +
+ +			if (b_next < be)
+ +				b_next = be;
+-+			if (lcs->end1 - lcs->begin1 < ae - as || rc < index->cnt) {
+++			if (lcs->end1 - lcs->begin1 + 1 < ae - as || rc < index->cnt) {
+ +				lcs->begin1 = as;
+ +				lcs->begin2 = bs;
+ +				lcs->end1 = ae;
+-- 
+1.7.4.msysgit.0
+

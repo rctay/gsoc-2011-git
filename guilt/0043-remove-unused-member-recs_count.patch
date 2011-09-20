@@ -1,0 +1,39 @@
+From 76e43bc592c30fe2e5ee72545e946afa5f2b316b Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:47:05 +0800
+Subject: [PATCH 043/130] remove unused member, recs_count
+
+---
+ guilt/gsoc-diff/teach-histogram |    7 +++----
+ 1 files changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index 103ed8d..8c16c0c 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -95,10 +95,10 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..0e2c5b7
++index 0000000..55d2b9e
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+-@@ -0,0 +1,330 @@
++@@ -0,0 +1,329 @@
+ +#include "xinclude.h"
+ +#include "xtypes.h"
+ +#include "xdiff.h"
+@@ -127,8 +127,7 @@ index 0000000..0e2c5b7
+ +		     key_shift,
+ +		     ptr_shift;
+ +
+-+	unsigned int recs_count,
+-+		     cnt,
+++	unsigned int cnt,
+ +		     has_common;
+ +
+ +	xdfenv_t *env;
+-- 
+1.7.4.msysgit.0
+

@@ -1,0 +1,180 @@
+From 42d8aac93454bc31d3b0704fa5fa4e9e10c19eec Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:48:09 +0800
+Subject: [PATCH 053/130] fix implementation
+
+---
+ guilt/gsoc-diff/teach-histogram |   70 +++++++++++++++++---------------------
+ 1 files changed, 31 insertions(+), 39 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index 99b5ae2..f4dd489 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -95,10 +95,10 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..53fe4cc
++index 0000000..acb43d1
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+-@@ -0,0 +1,333 @@
++@@ -0,0 +1,325 @@
+ +#include "xinclude.h"
+ +#include "xtypes.h"
+ +#include "xdiff.h"
+@@ -115,6 +115,7 @@ index 0000000..53fe4cc
+ +		struct record *next;
+ +	} **records, /* an ocurrence */
+ +	  **line_map; /* map of line to record chain */
+++	unsigned int *next_ptrs;
+ +	unsigned int table_bits,
+ +		     records_size,
+ +		     line_map_size;
+@@ -137,6 +138,12 @@ index 0000000..53fe4cc
+ +
+ +#define LINE_MAP(i, a) (i->line_map[(a) - i->ptr_shift])
+ +
+++#define NEXT_PTR(index, ptr) \
+++	(index->next_ptrs[(ptr) - index->ptr_shift])
+++
+++#define CNT(index, ptr) \
+++	((LINE_MAP(index, ptr))->cnt)
+++
+ +#define get_rec(env, s, l) \
+ +	(env->xdf##s.recs[l-1])
+ +
+@@ -161,8 +168,7 @@ index 0000000..53fe4cc
+ +{
+ +	unsigned int ptr, tbl_idx;
+ +	unsigned int chain_len;
+-+	unsigned int new_cnt;
+-+	struct record **rec_chain, *rec, *new_rec;
+++	struct record **rec_chain, *rec;
+ +
+ +	for (ptr = LINE_END(1); line1 <= ptr; ptr--) {
+ +		tbl_idx = table_hash(index, 1, ptr);
+@@ -172,19 +178,10 @@ index 0000000..53fe4cc
+ +		chain_len = 0;
+ +		while (rec) {
+ +			if (cmp(index, 1, rec->ptr, 1, ptr)) {
+-+				/* insert a new occurrence record */
+-+				if (!(new_rec = (struct record *)
+-+					xdl_malloc(sizeof(struct record))))
+-+					return -1;
+-+				new_rec->ptr = ptr;
+-+				new_cnt = rec->cnt + 1;
+-+				if (new_cnt > MAX_CNT)
+-+					new_cnt = MAX_CNT;
+-+				new_rec->cnt = new_cnt;
+-+
+-+				new_rec->next = rec;
+-+				*rec_chain = new_rec;
+-+				LINE_MAP(index, ptr) = new_rec;
+++				NEXT_PTR(index, ptr) = rec->ptr;
+++				rec->ptr = ptr;
+++				rec->cnt = XDL_MIN(MAX_CNT, rec->cnt + 1);
+++				LINE_MAP(index, ptr) = rec;
+ +				goto continue_scan;
+ +			}
+ +
+@@ -196,14 +193,14 @@ index 0000000..53fe4cc
+ +			return -1;
+ +
+ +		/* first occurrence, create occurrence chain */
+-+		if (!(new_rec = (struct record *)
+++		if (!(rec = (struct record *)
+ +			xdl_malloc(sizeof(struct record))))
+ +			return -1;
+-+		new_rec->ptr = ptr;
+-+		new_rec->cnt = 1;
+-+		new_rec->next = *rec_chain;
+-+		LINE_MAP(index, ptr) = new_rec;
+-+		*rec_chain = new_rec;
+++		rec->ptr = ptr;
+++		rec->cnt = 1;
+++		rec->next = *rec_chain;
+++		*rec_chain = rec;
+++		LINE_MAP(index, ptr) = rec;
+ +
+ +continue_scan:
+ +		; /* no op */
+@@ -212,18 +209,6 @@ index 0000000..53fe4cc
+ +	return 0;
+ +}
+ +
+-+static int get_next_ptr(struct histindex *index, int ptr)
+-+{
+-+	struct record *rec = LINE_MAP(index, ptr)->next;
+-+	return rec ? rec->ptr : 0;
+-+}
+-+
+-+static int get_cnt(struct histindex *index, int ptr)
+-+{
+-+	struct record *rec = LINE_MAP(index, ptr);
+-+	return rec ? rec->cnt : 0;
+-+}
+-+
+ +static int try_lcs(struct histindex *index, struct region *lcs, int b_ptr,
+ +	int line1, int count1, int line2, int count2)
+ +{
+@@ -246,7 +231,7 @@ index 0000000..53fe4cc
+ +		index->has_common = 1;
+ +		for (;;) {
+ +			should_break = 0;
+-+			np = get_next_ptr(index, as);
+++			np = NEXT_PTR(index, as);
+ +			bs = b_ptr;
+ +			ae = as;
+ +			be = bs;
+@@ -257,14 +242,14 @@ index 0000000..53fe4cc
+ +				as--;
+ +				bs--;
+ +				if (1 < rc)
+-+					rc = XDL_MIN(rc, get_cnt(index, as));
+++					rc = XDL_MIN(rc, CNT(index, as));
+ +			}
+ +			while (ae < LINE_END(1) && be < LINE_END(2)
+ +				&& cmp(index, 1, ae+1, 2, be+1)) {
+ +				ae++;
+ +				be++;
+ +				if (1 < rc)
+-+					rc = XDL_MIN(rc, get_cnt(index, ae));
+++					rc = XDL_MIN(rc, CNT(index, ae));
+ +			}
+ +
+ +			if (b_next <= be)
+@@ -281,7 +266,7 @@ index 0000000..53fe4cc
+ +				break;
+ +
+ +			while (np <= ae) {
+-+				np = get_next_ptr(index, np);
+++				np = NEXT_PTR(index, np);
+ +				if (np == 0) {
+ +					should_break = 1;
+ +					break;
+@@ -384,6 +369,12 @@ index 0000000..53fe4cc
+ +		goto cleanup;
+ +	memset(index.line_map, 0, sz);
+ +
+++	sz = index.line_map_size;
+++	sz *= sizeof(unsigned int);
+++	if (!(index.next_ptrs = (unsigned int *) xdl_malloc(sz)))
+++		goto cleanup;
+++	memset(index.next_ptrs, 0, sz);
+++
+ +	index.ptr_shift = line1;
+ +	index.max_chain_length = 64;
+ +
+@@ -412,6 +403,7 @@ index 0000000..53fe4cc
+ +cleanup:
+ +	xdl_free(index.records);
+ +	xdl_free(index.line_map);
+++	xdl_free(index.next_ptrs);
+ +
+ +	return result;
+ +}
+-- 
+1.7.4.msysgit.0
+

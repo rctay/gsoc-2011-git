@@ -1,0 +1,38 @@
+From 7ab505248509a1149d2d4b6483e08acd57cc217e Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:53:17 +0800
+Subject: [PATCH 062/130] scanA: add note on XDL_MIN() use
+
+This spot differs from JGit too.
+---
+ guilt/gsoc-diff/teach-histogram |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index ac6ff14..d69b208 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -108,10 +108,10 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..3edbba1
++index 0000000..b26da77
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+-@@ -0,0 +1,340 @@
++@@ -0,0 +1,341 @@
+ +#include "xinclude.h"
+ +#include "xtypes.h"
+ +#include "xdiff.h"
+@@ -199,6 +199,7 @@ index 0000000..3edbba1
+ +				 */
+ +				NEXT_PTR(index, ptr) = rec->ptr;
+ +				rec->ptr = ptr;
+++				/* cap rec->cnt at MAX_CNT */
+ +				rec->cnt = XDL_MIN(MAX_CNT, rec->cnt + 1);
+ +				LINE_MAP(index, ptr) = rec;
+ +				goto continue_scan;
+-- 
+1.7.4.msysgit.0
+

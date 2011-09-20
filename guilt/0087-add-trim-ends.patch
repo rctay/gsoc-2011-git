@@ -1,0 +1,22 @@
+From d36bdb74ab0e409866a246114c6785fa12d8eec3 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 23:44:49 +0800
+Subject: [PATCH 087/130] add trim-ends
+
+---
+ guilt/gsoc-diff/series    |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+ create mode 100644 guilt/gsoc-diff/trim-ends
+
+diff --git a/guilt/gsoc-diff/series b/guilt/gsoc-diff/series
+index e69de29..e4f8a44 100644
+--- a/guilt/gsoc-diff/series
++++ b/guilt/gsoc-diff/series
+@@ -0,0 +1 @@
++trim-ends
+diff --git a/guilt/gsoc-diff/trim-ends b/guilt/gsoc-diff/trim-ends
+new file mode 100644
+index 0000000..e69de29
+-- 
+1.7.4.msysgit.0
+

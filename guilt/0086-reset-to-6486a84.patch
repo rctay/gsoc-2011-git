@@ -1,0 +1,255 @@
+From d419be266a207743a9ea93d9709feae27bef4595 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Wed, 10 Aug 2011 06:22:27 +0800
+Subject: [PATCH 086/130] reset to 6486a84
+
+---
+ guilt/gsoc-diff/drop-var              |   27 -------------
+ guilt/gsoc-diff/fix-histogram-recurse |   41 -------------------
+ guilt/gsoc-diff/remove-mmfile_next    |   69 ---------------------------------
+ guilt/gsoc-diff/series                |    4 --
+ guilt/gsoc-diff/use-trim-ends         |   65 -------------------------------
+ 5 files changed, 0 insertions(+), 206 deletions(-)
+ delete mode 100644 guilt/gsoc-diff/drop-var
+ delete mode 100644 guilt/gsoc-diff/fix-histogram-recurse
+ delete mode 100644 guilt/gsoc-diff/remove-mmfile_next
+ delete mode 100644 guilt/gsoc-diff/use-trim-ends
+
+diff --git a/guilt/gsoc-diff/drop-var b/guilt/gsoc-diff/drop-var
+deleted file mode 100644
+index dd39a9d..0000000
+--- a/guilt/gsoc-diff/drop-var
++++ /dev/null
+@@ -1,27 +0,0 @@
+-xdiff/xhistogram: drop need for additional variable
+-
+-Having an additional variable (ptr) instead of changing line(1|2) and
+-count(1|2) was for debugging purposes.
+-
+-Signed-off-by: Tay Ray Chuan <rctay89@gmail.com>
+-
+-diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+-index 804e19b..3201fc5 100644
+---- a/xdiff/xhistogram.c
+-+++ b/xdiff/xhistogram.c
+-@@ -323,11 +323,10 @@ static int histogram_diff(xpparam_t const *xpp, xdfenv_t *env,
+- 		result = fall_back_to_classic_diff(&index, line1, count1, line2, count2);
+- 	else {
+- 		if (lcs.begin1 == 0 && lcs.begin2 == 0) {
+--			int ptr;
+--			for (ptr = 0; ptr < count1; ptr++)
+--				env->xdf1.rchg[line1 + ptr - 1] = 1;
+--			for (ptr = 0; ptr < count2; ptr++)
+--				env->xdf2.rchg[line2 + ptr - 1] = 1;
+-+			while (count1--)
+-+				env->xdf1.rchg[line1++ - 1] = 1;
+-+			while (count2--)
+-+				env->xdf2.rchg[line2++ - 1] = 1;
+- 			result = 0;
+- 		} else {
+- 			if (result = histogram_diff(xpp, env,
+diff --git a/guilt/gsoc-diff/fix-histogram-recurse b/guilt/gsoc-diff/fix-histogram-recurse
+deleted file mode 100644
+index d009812..0000000
+--- a/guilt/gsoc-diff/fix-histogram-recurse
++++ /dev/null
+@@ -1,41 +0,0 @@
+-xdiff/xhistogram: rework handling of recursed results
+-
+-Previously we were over-complicating matters by trying to combine the
+-recursed results. Now, terminate immediately if a recursive call failed
+-and return its result.
+-
+-Signed-off-by: Tay Ray Chuan <rctay89@gmail.com>
+-
+-diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+-index 391333a..9cb69ea 100644
+---- a/xdiff/xhistogram.c
+-+++ b/xdiff/xhistogram.c
+-@@ -339,21 +339,22 @@ static int histogram_diff(xpparam_t const *xpp, xdfenv_t *env,
+- 	if (find_lcs(&index, &lcs, line1, count1, line2, count2))
+- 		result = fall_back_to_classic_diff(&index, line1, count1, line2, count2);
+- 	else {
+--		result = 0;
+- 		if (lcs.begin1 == 0 && lcs.begin2 == 0) {
+- 			int ptr;
+- 			for (ptr = 0; ptr < count1; ptr++)
+- 				env->xdf1.rchg[line1 + ptr - 1] = 1;
+- 			for (ptr = 0; ptr < count2; ptr++)
+- 				env->xdf2.rchg[line2 + ptr - 1] = 1;
+-+			result = 0;
+- 		} else {
+--			result = histogram_diff(xpp, env,
+-+			if (result = histogram_diff(xpp, env,
+- 				line1, lcs.begin1 - line1,
+--				line2, lcs.begin2 - line2);
+--			result = histogram_diff(xpp, env,
+-+				line2, lcs.begin2 - line2))
+-+				goto cleanup;
+-+			if (result = histogram_diff(xpp, env,
+- 				lcs.end1 + 1, LINE_END(1) - lcs.end1,
+--				lcs.end2 + 1, LINE_END(2) - lcs.end2);
+--			result *= -1;
+-+				lcs.end2 + 1, LINE_END(2) - lcs.end2))
+-+				goto cleanup;
+- 		}
+- 	}
+- 
+diff --git a/guilt/gsoc-diff/remove-mmfile_next b/guilt/gsoc-diff/remove-mmfile_next
+deleted file mode 100644
+index 253dae9..0000000
+--- a/guilt/gsoc-diff/remove-mmfile_next
++++ /dev/null
+@@ -1,69 +0,0 @@
+-xdiff: do away with xdl_mmfile_next()
+-
+-Given our simple mmfile structure, xdl_mmfile_next() calls are
+-redundant. Do away with calls to them.
+-
+-Signed-off-by: Tay Ray Chuan <rctay89@gmail.com>
+-
+-diff --git a/xdiff/xdiff.h b/xdiff/xdiff.h
+-index c26170c..4beb10c 100644
+---- a/xdiff/xdiff.h
+-+++ b/xdiff/xdiff.h
+-@@ -106,7 +106,6 @@ typedef struct s_bdiffparam {
+- #define xdl_realloc(ptr,x) realloc(ptr,x)
+- 
+- void *xdl_mmfile_first(mmfile_t *mmf, long *size);
+--void *xdl_mmfile_next(mmfile_t *mmf, long *size);
+- long xdl_mmfile_size(mmfile_t *mmf);
+- 
+- int xdl_diff(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
+-diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
+-index dfbb0de..620fc9a 100644
+---- a/xdiff/xprepare.c
+-+++ b/xdiff/xprepare.c
+-@@ -168,12 +168,7 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+- 
+- 	nrec = 0;
+- 	if ((cur = blk = xdl_mmfile_first(mf, &bsize)) != NULL) {
+--		for (top = blk + bsize;;) {
+--			if (cur >= top) {
+--				if (!(cur = blk = xdl_mmfile_next(mf, &bsize)))
+--					break;
+--				top = blk + bsize;
+--			}
+-+		for (top = blk + bsize; cur < top; ) {
+- 			prev = cur;
+- 			hav = xdl_hash_record(&cur, top, xpp->flags);
+- 			if (nrec >= narec) {
+-diff --git a/xdiff/xutils.c b/xdiff/xutils.c
+-index a45e89b..0de084e 100644
+---- a/xdiff/xutils.c
+-+++ b/xdiff/xutils.c
+-@@ -67,12 +67,6 @@ void *xdl_mmfile_first(mmfile_t *mmf, long *size)
+- }
+- 
+- 
+--void *xdl_mmfile_next(mmfile_t *mmf, long *size)
+--{
+--	return NULL;
+--}
+--
+--
+- long xdl_mmfile_size(mmfile_t *mmf)
+- {
+- 	return mmf->size;
+-@@ -160,13 +154,7 @@ long xdl_guess_lines(mmfile_t *mf, long sample) {
+- 	char const *data, *cur, *top;
+- 
+- 	if ((cur = data = xdl_mmfile_first(mf, &size)) != NULL) {
+--		for (top = data + size; nl < sample;) {
+--			if (cur >= top) {
+--				tsize += (long) (cur - data);
+--				if (!(cur = data = xdl_mmfile_next(mf, &size)))
+--					break;
+--				top = data + size;
+--			}
+-+		for (top = data + size; nl < sample && cur < top; ) {
+- 			nl++;
+- 			if (!(cur = memchr(cur, '\n', top - cur)))
+- 				cur = top;
+diff --git a/guilt/gsoc-diff/series b/guilt/gsoc-diff/series
+index ad2cf32..e69de29 100644
+--- a/guilt/gsoc-diff/series
++++ b/guilt/gsoc-diff/series
+@@ -1,4 +0,0 @@
+-remove-mmfile_next
+-fix-histogram-recurse
+-use-trim-ends
+-drop-var
+diff --git a/guilt/gsoc-diff/use-trim-ends b/guilt/gsoc-diff/use-trim-ends
+deleted file mode 100644
+index 5980772..0000000
+--- a/guilt/gsoc-diff/use-trim-ends
++++ /dev/null
+@@ -1,65 +0,0 @@
+-xdiff/xhistogram: rely on xdl_trim_ends()
+-
+-Do away with reduce_common_start_end() and use xdf->dstart and xdf->dend
+-set by xdl_trim_ends() that similarly tells us where the first unmatched
+-line from the start and end occurs.
+-
+-Signed-off-by: Tay Ray Chuan <rctay89@gmail.com>
+-
+-diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+-index 9cb69ea..804e19b 100644
+---- a/xdiff/xhistogram.c
+-+++ b/xdiff/xhistogram.c
+-@@ -102,7 +102,7 @@ static int cmp_recs(xpparam_t const *xpp,
+- 	(cmp_recs(xpp, REC(env, s1, l1), REC(env, s2, l2)))
+- 
+- #define CMP(i, s1, l1, s2, l2) \
+--	(CMP_ENV(i->xpp, i->env, s1, l1, s2, l2))
+-+	(cmp_recs(i->xpp, REC(i->env, s1, l1), REC(i->env, s2, l2)))
+- 
+- #define TABLE_HASH(index, side, line) \
+- 	XDL_HASHLONG((REC(index->env, side, line))->ha, index->table_bits)
+-@@ -248,23 +248,6 @@ static int find_lcs(struct histindex *index, struct region *lcs,
+- 	return index->has_common && index->max_chain_length < index->cnt;
+- }
+- 
+--static void reduce_common_start_end(xpparam_t const *xpp, xdfenv_t *env,
+--	int *line1, int *count1, int *line2, int *count2)
+--{
+--	if (*count1 <= 1 || *count2 <= 1)
+--		return;
+--	while (*count1 > 1 && *count2 > 1 && CMP_ENV(xpp, env, 1, *line1, 2, *line2)) {
+--		(*line1)++;
+--		(*count1)--;
+--		(*line2)++;
+--		(*count2)--;
+--	}
+--	while (*count1 > 1 && *count2 > 1 && CMP_ENV(xpp, env, 1, LINE_END_PTR(1), 2, LINE_END_PTR(2))) {
+--		(*count1)--;
+--		(*count2)--;
+--	}
+--}
+--
+- static int fall_back_to_classic_diff(struct histindex *index,
+- 		int line1, int count1, int line2, int count2)
+- {
+-@@ -370,16 +353,10 @@ cleanup:
+- int xdl_do_histogram_diff(mmfile_t *file1, mmfile_t *file2,
+- 	xpparam_t const *xpp, xdfenv_t *env)
+- {
+--	int line1, line2, count1, count2;
+--
+- 	if (xdl_prepare_env(file1, file2, xpp, env) < 0)
+- 		return -1;
+- 
+--	line1 = line2 = 1;
+--	count1 = env->xdf1.nrec;
+--	count2 = env->xdf2.nrec;
+--
+--	reduce_common_start_end(xpp, env, &line1, &count1, &line2, &count2);
+--
+--	return histogram_diff(xpp, env, line1, count1, line2, count2);
+-+	return histogram_diff(xpp, env,
+-+		env->xdf1.dstart + 1, env->xdf1.dend - env->xdf1.dstart + 1,
+-+		env->xdf2.dstart + 1, env->xdf2.dend - env->xdf2.dstart + 1);
+- }
+-- 
+1.7.4.msysgit.0
+

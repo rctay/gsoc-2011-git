@@ -1,0 +1,20 @@
+From 2f3aedf7052c419dd9b43aabd3bd2d4355953943 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 20:15:05 +0800
+Subject: [PATCH 002/130] ignore ~$ files
+
+---
+ .gitignore |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+ create mode 100644 .gitignore
+
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..b25c15b
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1 @@
++*~
+-- 
+1.7.4.msysgit.0
+

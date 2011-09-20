@@ -1,0 +1,28 @@
+From 4c1c39f1e00a0a6c691757c25c7e0891da576c63 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Wed, 10 Aug 2011 06:42:50 +0800
+Subject: [PATCH 124/130] import 07a154e
+
+---
+ guilt/gsoc-diff/provide-memrchr |   11 +++++++++++
+ 1 files changed, 11 insertions(+), 0 deletions(-)
+
+diff --git a/guilt/gsoc-diff/provide-memrchr b/guilt/gsoc-diff/provide-memrchr
+index e69de29..96098dc 100644
+--- a/guilt/gsoc-diff/provide-memrchr
++++ b/guilt/gsoc-diff/provide-memrchr
+@@ -0,0 +1,11 @@
++diff --git a/xdiff/xinclude.h b/xdiff/xinclude.h
++index 526ccb3..724130a 100644
++--- a/xdiff/xinclude.h
+++++ b/xdiff/xinclude.h
++@@ -38,5 +38,6 @@
++ #include "xdiffi.h"
++ #include "xemit.h"
++ 
+++#include "git-compat-util.h"
++ 
++ #endif /* #if !defined(XINCLUDE_H) */
+-- 
+1.7.4.msysgit.0
+

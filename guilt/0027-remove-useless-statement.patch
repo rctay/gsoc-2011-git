@@ -1,0 +1,34 @@
+From ffc355534fe94cfd8deb53e66f117397e66b1f6c Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:44:59 +0800
+Subject: [PATCH 027/130] remove useless statement
+
+---
+ guilt/gsoc-diff/teach-histogram |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index 6ad04cd..c709c4f 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -95,7 +95,7 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..1f02566
++index 0000000..f6cbbd4
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+ @@ -0,0 +1,340 @@
+@@ -228,7 +228,7 @@ index 0000000..1f02566
+ +	unsigned int as, ae, bs, be, np, rc;
+ +	int should_break;
+ +
+-+	for (rec; rec_idx != 0; rec_idx = REC_NEXT(rec)) {
+++	for (; rec_idx != 0; rec_idx = REC_NEXT(rec)) {
+ +		rec = index->recs[rec_idx];
+ +
+ +		if (REC_CNT(rec) > index->cnt) {
+-- 
+1.7.4.msysgit.0
+

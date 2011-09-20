@@ -1,0 +1,76 @@
+From 65c30d059620d0b91457d52b60a3ba47fb0b37d0 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 20:33:37 +0800
+Subject: [PATCH 007/130] meld if (cur >= top) condition into parent loop
+
+---
+ guilt/gsoc-diff/remove-mmfile_next |   35 ++++++++++++++++++++---------------
+ 1 files changed, 20 insertions(+), 15 deletions(-)
+
+diff --git a/guilt/gsoc-diff/remove-mmfile_next b/guilt/gsoc-diff/remove-mmfile_next
+index 0ed6104..2311120 100644
+--- a/guilt/gsoc-diff/remove-mmfile_next
++++ b/guilt/gsoc-diff/remove-mmfile_next
+@@ -11,23 +11,25 @@ index 711048e..6ea1d0e 100644
+  
+  int xdl_diff(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
+ diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
+-index 1689085..b269c37 100644
++index 1689085..29da749 100644
+ --- a/xdiff/xprepare.c
+ +++ b/xdiff/xprepare.c
+-@@ -171,9 +171,8 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
++@@ -169,12 +169,7 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
++ 
++ 	nrec = 0;
+  	if ((cur = blk = xdl_mmfile_first(mf, &bsize)) != NULL) {
+- 		for (top = blk + bsize;;) {
+- 			if (cur >= top) {
++-		for (top = blk + bsize;;) {
++-			if (cur >= top) {
+ -				if (!(cur = blk = xdl_mmfile_next(mf, &bsize)))
+ -					break;
+ -				top = blk + bsize;
+-+				cur = blk = NULL;
+-+				break;
+- 			}
++-			}
+++		for (top = blk + bsize; cur < top; ) {
+  			prev = cur;
+  			hav = xdl_hash_record(&cur, top, xpp->flags);
++ 			if (nrec >= narec) {
+ diff --git a/xdiff/xutils.c b/xdiff/xutils.c
+-index ab65034..08e962a 100644
++index ab65034..ea1357d 100644
+ --- a/xdiff/xutils.c
+ +++ b/xdiff/xutils.c
+ @@ -71,12 +71,6 @@ void *xdl_mmfile_first(mmfile_t *mmf, long *size)
+@@ -43,15 +45,18 @@ index ab65034..08e962a 100644
+  long xdl_mmfile_size(mmfile_t *mmf)
+  {
+  	return mmf->size;
+-@@ -167,9 +161,8 @@ long xdl_guess_lines(mmfile_t *mf) {
+- 		for (top = data + size; nl < XDL_GUESS_NLINES;) {
+- 			if (cur >= top) {
+- 				tsize += (long) (cur - data);
++@@ -164,13 +158,7 @@ long xdl_guess_lines(mmfile_t *mf) {
++ 	char const *data, *cur, *top;
++ 
++ 	if ((cur = data = xdl_mmfile_first(mf, &size)) != NULL) {
++-		for (top = data + size; nl < XDL_GUESS_NLINES;) {
++-			if (cur >= top) {
++-				tsize += (long) (cur - data);
+ -				if (!(cur = data = xdl_mmfile_next(mf, &size)))
+ -					break;
+ -				top = data + size;
+-+				cur = data = NULL;
+-+				break;
+- 			}
++-			}
+++		for (top = data + size; nl < XDL_GUESS_NLINES && cur < top; ) {
+  			nl++;
+  			if (!(cur = memchr(cur, '\n', top - cur)))
++ 				cur = top;
+-- 
+1.7.4.msysgit.0
+

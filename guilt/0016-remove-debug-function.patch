@@ -1,0 +1,46 @@
+From 83dd667e94b3632f9d99a63986d9f37336758275 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:42:28 +0800
+Subject: [PATCH 016/130] remove debug function
+
+---
+ guilt/gsoc-diff/teach-histogram |   14 ++------------
+ 1 files changed, 2 insertions(+), 12 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index bcb3525..dc192da 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -77,10 +77,10 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..5b18f6e
++index 0000000..b6d7b83
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+-@@ -0,0 +1,363 @@
++@@ -0,0 +1,353 @@
+ +#include "xinclude.h"
+ +#include "xtypes.h"
+ +#include "xdiff.h"
+@@ -169,16 +169,6 @@ index 0000000..5b18f6e
+ +	return XDL_HASHLONG((map_side(index, side))->recs[line - 1]->ha, index->table_bits);
+ +}
+ +
+-+static void print_record(struct histindex *index, int side, int line)
+-+{
+-+	xrecord_t *rec = (map_side(index, side))->recs[line - 1];
+-+	char *str;
+-+	str = xdl_malloc(rec->size+1);
+-+	strncpy(str, rec->ptr, rec->size);
+-+	str[rec->size+1] = '\0';
+-+	free(str);
+-+}
+-+
+ +static int scanA(struct histindex *index, int line1, int count1)
+ +{
+ +	int ptr, rec_idx, tbl_idx;
+-- 
+1.7.4.msysgit.0
+

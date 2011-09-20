@@ -1,0 +1,59 @@
+From c8b6c77f5a756c063139bcc3d8c27efcbbd28a34 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:47:30 +0800
+Subject: [PATCH 048/130] simplify INDEX_NEXT(index, ptr).rec->cnt
+
+---
+ guilt/gsoc-diff/teach-histogram |   14 ++++++++++----
+ 1 files changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index 977c34e..968e285 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -95,10 +95,10 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..df93e46
++index 0000000..add844e
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+-@@ -0,0 +1,335 @@
++@@ -0,0 +1,341 @@
+ +#include "xinclude.h"
+ +#include "xtypes.h"
+ +#include "xdiff.h"
+@@ -226,6 +226,12 @@ index 0000000..df93e46
+ +	return rec ? rec->ptr : 0;
+ +}
+ +
+++static int get_cnt(struct histindex *index, int ptr)
+++{
+++	struct record *rec = INDEX_NEXT(index, ptr).rec;
+++	return rec ? rec->cnt : 0;
+++}
+++
+ +static int try_lcs(struct histindex *index, struct region *lcs, int b_ptr,
+ +	int line1, int count1, int line2, int count2)
+ +{
+@@ -259,14 +265,14 @@ index 0000000..df93e46
+ +				as--;
+ +				bs--;
+ +				if (1 < rc)
+-+					rc = XDL_MIN(rc, INDEX_NEXT(index, as).rec->cnt);
+++					rc = XDL_MIN(rc, get_cnt(index, as));
+ +			}
+ +			while (ae < LINE_END(1) && be < LINE_END(2)
+ +				&& cmp(index, 1, ae+1, 2, be+1)) {
+ +				ae++;
+ +				be++;
+ +				if (1 < rc)
+-+					rc = XDL_MIN(rc, INDEX_NEXT(index, ae).rec->cnt);
+++					rc = XDL_MIN(rc, get_cnt(index, ae));
+ +			}
+ +
+ +			if (b_next <= be)
+-- 
+1.7.4.msysgit.0
+

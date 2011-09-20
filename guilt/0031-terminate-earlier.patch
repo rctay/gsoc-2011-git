@@ -1,0 +1,45 @@
+From a6bd312fdf67db0fa421be91f60fd0755cb5386b Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:45:28 +0800
+Subject: [PATCH 031/130] terminate earlier
+
+---
+ guilt/gsoc-diff/teach-histogram |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index b43d34e..c245d36 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -95,7 +95,7 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..a754242
++index 0000000..58d78a0
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+ @@ -0,0 +1,341 @@
+@@ -349,6 +349,9 @@ index 0000000..a754242
+ +	if (count1 <= 0 && count2 <= 0)
+ +		return 0;
+ +
+++	if (LINE_END(1) >= MAX_PTR)
+++		return -1;
+++
+ +	if (!count1) {
+ +		while(count2--)
+ +			env->xdf2.rchg[line2++ - 1] = 1;
+@@ -366,9 +369,6 @@ index 0000000..a754242
+ +
+ + 	reduce_common_start_end(&index, &line1, &count1, &line2, &count2);
+ +
+-+	if (LINE_END(1) >= MAX_PTR)
+-+		return -1;
+-+
+ +	index.table = NULL;
+ +	index.recs = NULL;
+ +	index.next = NULL;
+-- 
+1.7.4.msysgit.0
+

@@ -1,0 +1,40 @@
+From 9b6a1aa6ec18b364a2148007c29a00878be7588b Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:45:12 +0800
+Subject: [PATCH 029/130] rework field bit lengths
+
+---
+ guilt/gsoc-diff/teach-histogram |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index a1872cf..6049be9 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -95,7 +95,7 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..cdeae6d
++index 0000000..cb3edfb
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+ @@ -0,0 +1,341 @@
+@@ -103,10 +103,10 @@ index 0000000..cdeae6d
+ +#include "xtypes.h"
+ +#include "xdiff.h"
+ +
+-+#define REC_NEXT_SHIFT	(28 + 8)
+-+#define REC_PTR_SHIFT	8
+-+#define REC_PTR_MASK	((1 << 28) - 1)
+-+#define REC_CNT_MASK	((1 << 8) - 1)
+++#define REC_NEXT_SHIFT	(12 + 6)
+++#define REC_PTR_SHIFT	(6)
+++#define REC_PTR_MASK	((1 << 12) - 1)
+++#define REC_CNT_MASK	((1 << 6) - 1)
+ +#define MAX_PTR		REC_PTR_MASK
+ +#define MAX_CNT		REC_CNT_MASK
+ +
+-- 
+1.7.4.msysgit.0
+

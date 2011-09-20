@@ -1,0 +1,34 @@
+From 4e017169164621becf9e1f88aa5ed220882afd03 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:47:10 +0800
+Subject: [PATCH 044/130] fix important bug
+
+---
+ guilt/gsoc-diff/teach-histogram |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index 8c16c0c..67ef31c 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -95,7 +95,7 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..55d2b9e
++index 0000000..6fcf71b
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+ @@ -0,0 +1,329 @@
+@@ -181,7 +181,7 @@ index 0000000..55d2b9e
+ +					xdl_malloc(sizeof(struct record))))
+ +					return -1;
+ +				new_rec->ptr = ptr;
+-+				new_cnt = rec->ptr + 1;
+++				new_cnt = rec->cnt + 1;
+ +				if (new_cnt > MAX_CNT)
+ +					new_cnt = MAX_CNT;
+ +				new_rec->cnt = new_cnt;
+-- 
+1.7.4.msysgit.0
+

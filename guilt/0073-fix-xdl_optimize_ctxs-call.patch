@@ -1,0 +1,45 @@
+From c67aea2d75c9e25c839170829fa6530d908fdb45 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 22:16:54 +0800
+Subject: [PATCH 073/130] fix xdl_optimize_ctxs() call
+
+---
+ guilt/gsoc-diff/skip-classify |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/guilt/gsoc-diff/skip-classify b/guilt/gsoc-diff/skip-classify
+index da0d8ca..771b104 100644
+--- a/guilt/gsoc-diff/skip-classify
++++ b/guilt/gsoc-diff/skip-classify
+@@ -13,7 +13,7 @@ This gives us a small boost in performance.
+ 
+ Signed-off-by: Tay Ray Chuan <rctay89@gmail.com>
+ diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
+-index 3ebad0f..4770107 100644
++index 3ebad0f..d9f9cf5 100644
+ --- a/xdiff/xprepare.c
+ +++ b/xdiff/xprepare.c
+ @@ -154,11 +154,15 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+@@ -57,7 +57,7 @@ index 3ebad0f..4770107 100644
+  
+  		return -1;
+  	}
+-@@ -252,9 +258,10 @@ int xdl_prepare_env(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
++@@ -252,9 +258,11 @@ int xdl_prepare_env(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
+  		return -1;
+  	}
+  
+@@ -65,8 +65,8 @@ index 3ebad0f..4770107 100644
+ +	if (!(xpp->flags & XDF_HISTOGRAM_DIFF))
+ +		xdl_free_classifier(&cf);
+  
+--	if (!(xpp->flags & XDF_PATIENCE_DIFF) &&
+-+	if (!(xpp->flags & XDF_HISTOGRAM_DIFF) &&
++ 	if (!(xpp->flags & XDF_PATIENCE_DIFF) &&
+++			!(xpp->flags & XDF_HISTOGRAM_DIFF) &&
+  			xdl_optimize_ctxs(&xe->xdf1, &xe->xdf2) < 0) {
+  
+  		xdl_free_ctx(&xe->xdf2);
+-- 
+1.7.4.msysgit.0
+

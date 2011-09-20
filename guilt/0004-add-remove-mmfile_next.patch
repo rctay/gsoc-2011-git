@@ -1,0 +1,23 @@
+From 28dcc7e6f2f93da319e479e7cc60bbae01877105 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 20:27:21 +0800
+Subject: [PATCH 004/130] add remove-mmfile_next
+
+---
+ guilt/gsoc-diff/series             |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+ create mode 100644 guilt/gsoc-diff/remove-mmfile_next
+
+diff --git a/guilt/gsoc-diff/remove-mmfile_next b/guilt/gsoc-diff/remove-mmfile_next
+new file mode 100644
+index 0000000..e69de29
+diff --git a/guilt/gsoc-diff/series b/guilt/gsoc-diff/series
+index 088703a..3d7ad52 100644
+--- a/guilt/gsoc-diff/series
++++ b/guilt/gsoc-diff/series
+@@ -1 +1,2 @@
++remove-mmfile_next
+ use-memset
+-- 
+1.7.4.msysgit.0
+

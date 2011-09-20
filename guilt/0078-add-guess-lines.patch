@@ -1,0 +1,25 @@
+From 14f3e8f45e7c2922888fc56e6264d26ce50dde57 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 23:13:50 +0800
+Subject: [PATCH 078/130] add guess-lines
+
+---
+ guilt/gsoc-diff/series      |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+ create mode 100644 guilt/gsoc-diff/guess-lines
+
+diff --git a/guilt/gsoc-diff/guess-lines b/guilt/gsoc-diff/guess-lines
+new file mode 100644
+index 0000000..e69de29
+diff --git a/guilt/gsoc-diff/series b/guilt/gsoc-diff/series
+index 098789f..62174fd 100644
+--- a/guilt/gsoc-diff/series
++++ b/guilt/gsoc-diff/series
+@@ -5,3 +5,4 @@ refactor-fallback
+ refactor-tests
+ teach-histogram
+ skip-classify
++guess-lines
+-- 
+1.7.4.msysgit.0
+

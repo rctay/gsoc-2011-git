@@ -1,0 +1,40 @@
+From bd6462d98e553eb9659900d925bb9f306f6ab03c Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Wed, 10 Aug 2011 20:36:33 +0800
+Subject: [PATCH 125/130] provide-memrchr: rework include
+
+---
+ guilt/gsoc-diff/provide-memrchr |   17 ++++++++++++-----
+ 1 files changed, 12 insertions(+), 5 deletions(-)
+
+diff --git a/guilt/gsoc-diff/provide-memrchr b/guilt/gsoc-diff/provide-memrchr
+index 96098dc..e3754fd 100644
+--- a/guilt/gsoc-diff/provide-memrchr
++++ b/guilt/gsoc-diff/provide-memrchr
+@@ -1,11 +1,18 @@
+ diff --git a/xdiff/xinclude.h b/xdiff/xinclude.h
+-index 526ccb3..724130a 100644
++index 526ccb3..2aa0a36 100644
+ --- a/xdiff/xinclude.h
+ +++ b/xdiff/xinclude.h
+-@@ -38,5 +38,6 @@
+- #include "xdiffi.h"
+- #include "xemit.h"
++@@ -23,12 +23,7 @@
++ #if !defined(XINCLUDE_H)
++ #define XINCLUDE_H
+  
++-#include <ctype.h>
++-#include <stdio.h>
++-#include <stdlib.h>
++-#include <unistd.h>
++-#include <string.h>
++-#include <limits.h>
+ +#include "git-compat-util.h"
+  
+- #endif /* #if !defined(XINCLUDE_H) */
++ #include "xmacros.h"
++ #include "xdiff.h"
+-- 
+1.7.4.msysgit.0
+

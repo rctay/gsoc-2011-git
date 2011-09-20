@@ -1,0 +1,43 @@
+From e007d6f17c2df0b030554b677ae854b802fb6d80 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:46:20 +0800
+Subject: [PATCH 037/130] cmp_recs: remove unused argument
+
+---
+ guilt/gsoc-diff/teach-histogram |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index 97f2d6b..ec509a2 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -95,7 +95,7 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..ea7b82d
++index 0000000..1410e03
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+ @@ -0,0 +1,346 @@
+@@ -153,7 +153,7 @@ index 0000000..ea7b82d
+ +#define get_rec(env, s, l) \
+ +	(env->xdf##s.recs[l-1])
+ +
+-+static int cmp_recs(xpparam_t const *xpp, xdfenv_t *env,
+++static int cmp_recs(xpparam_t const *xpp,
+ +	xrecord_t *r1, xrecord_t *r2)
+ +{
+ +	return r1->ha == r2->ha &&
+@@ -162,7 +162,7 @@ index 0000000..ea7b82d
+ +}
+ +
+ +#define cmp_env(xpp, env, s1, l1, s2, l2) \
+-+	(cmp_recs(xpp, env, get_rec(env, s1, l1), get_rec(env, s2, l2)))
+++	(cmp_recs(xpp, get_rec(env, s1, l1), get_rec(env, s2, l2)))
+ +
+ +#define cmp(i, s1, l1, s2, l2) \
+ +	(cmp_env(i->xpp, i->env, s1, l1, s2, l2))
+-- 
+1.7.4.msysgit.0
+

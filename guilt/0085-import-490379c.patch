@@ -1,0 +1,56 @@
+From a81d4ca44ac0b47837323d227e7c6d706b2ba594 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Mon, 1 Aug 2011 18:50:40 +0800
+Subject: [PATCH 085/130] import 490379c
+
+---
+ guilt/gsoc-diff/drop-var |   27 +++++++++++++++++++++++++++
+ guilt/gsoc-diff/series   |    1 +
+ 2 files changed, 28 insertions(+), 0 deletions(-)
+ create mode 100644 guilt/gsoc-diff/drop-var
+
+diff --git a/guilt/gsoc-diff/drop-var b/guilt/gsoc-diff/drop-var
+new file mode 100644
+index 0000000..dd39a9d
+--- /dev/null
++++ b/guilt/gsoc-diff/drop-var
+@@ -0,0 +1,27 @@
++xdiff/xhistogram: drop need for additional variable
++
++Having an additional variable (ptr) instead of changing line(1|2) and
++count(1|2) was for debugging purposes.
++
++Signed-off-by: Tay Ray Chuan <rctay89@gmail.com>
++
++diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
++index 804e19b..3201fc5 100644
++--- a/xdiff/xhistogram.c
+++++ b/xdiff/xhistogram.c
++@@ -323,11 +323,10 @@ static int histogram_diff(xpparam_t const *xpp, xdfenv_t *env,
++ 		result = fall_back_to_classic_diff(&index, line1, count1, line2, count2);
++ 	else {
++ 		if (lcs.begin1 == 0 && lcs.begin2 == 0) {
++-			int ptr;
++-			for (ptr = 0; ptr < count1; ptr++)
++-				env->xdf1.rchg[line1 + ptr - 1] = 1;
++-			for (ptr = 0; ptr < count2; ptr++)
++-				env->xdf2.rchg[line2 + ptr - 1] = 1;
+++			while (count1--)
+++				env->xdf1.rchg[line1++ - 1] = 1;
+++			while (count2--)
+++				env->xdf2.rchg[line2++ - 1] = 1;
++ 			result = 0;
++ 		} else {
++ 			if (result = histogram_diff(xpp, env,
+diff --git a/guilt/gsoc-diff/series b/guilt/gsoc-diff/series
+index 4cc79d3..ad2cf32 100644
+--- a/guilt/gsoc-diff/series
++++ b/guilt/gsoc-diff/series
+@@ -1,3 +1,4 @@
+ remove-mmfile_next
+ fix-histogram-recurse
+ use-trim-ends
++drop-var
+-- 
+1.7.4.msysgit.0
+

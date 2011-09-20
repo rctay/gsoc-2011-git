@@ -1,0 +1,33 @@
+From feafeb0908457e67d324ef1c33435bad811436d2 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Mon, 1 Aug 2011 00:06:47 +0800
+Subject: [PATCH 112/130] don't feed memchr() NULLs
+
+---
+ guilt/gsoc-diff/trim-ends |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/guilt/gsoc-diff/trim-ends b/guilt/gsoc-diff/trim-ends
+index c082bd9..0517f0d 100644
+--- a/guilt/gsoc-diff/trim-ends
++++ b/guilt/gsoc-diff/trim-ends
+@@ -1,5 +1,5 @@
+ diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
+-index 3ebad0f..d110b4f 100644
++index 3ebad0f..0166a10 100644
+ --- a/xdiff/xprepare.c
+ +++ b/xdiff/xprepare.c
+ @@ -26,6 +26,7 @@
+@@ -183,7 +183,8 @@ index 3ebad0f..d110b4f 100644
+  	nrec = 0;
+ +	xdf->dstart = *ntail = 0;
+  	if ((cur = blk = xdl_mmfile_first(mf, &bsize)) != NULL) {
+- 		for (top = blk + bsize; cur < top; ) {
++-		for (top = blk + bsize; cur < top; ) {
+++		for (top = blk + bsize; cur && cur < top; ) {
+  			prev = cur;
+ -			hav = xdl_hash_record(&cur, top, xpp->flags);
+ +			if (cur < xdf->rstart) {
+-- 
+1.7.4.msysgit.0
+

@@ -1,0 +1,54 @@
+From 43c253e22a8de1a8368c41edcc316983eb49cc5d Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:46:57 +0800
+Subject: [PATCH 042/130] remove old ref code
+
+---
+ guilt/gsoc-diff/teach-histogram |   10 ++--------
+ 1 files changed, 2 insertions(+), 8 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index c0bce69..103ed8d 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -95,10 +95,10 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..d92c688
++index 0000000..0e2c5b7
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+-@@ -0,0 +1,336 @@
++@@ -0,0 +1,330 @@
+ +#include "xinclude.h"
+ +#include "xtypes.h"
+ +#include "xdiff.h"
+@@ -191,15 +191,11 @@ index 0000000..d92c688
+ +				new_rec->next = rec;
+ +				rec->previous = new_rec;
+ +				*rec_chain = new_rec;
+-+/* 				index->recs[rec_idx] = REC_CREATE(REC_NEXT(rec), ptr, new_cnt);  */
+ +				INDEX_NEXT(index, ptr).ptr = rec->ptr;
+ +				INDEX_NEXT(index, ptr).rec = new_rec;
+-+/* 				INDEX_NEXT(index, ptr) = rec->ptr;  */
+-+/* 				INDEX_REC_IDXS(index, ptr) = rec;  */
+ +				goto continue_scan;
+ +			}
+ +
+-+/* 			rec_idx = REC_NEXT(rec);  */
+ +			rec = rec->next;
+ +			chain_len++;
+ +		}
+@@ -217,8 +213,6 @@ index 0000000..d92c688
+ +		INDEX_NEXT(index, ptr).ptr = 0;
+ +		INDEX_NEXT(index, ptr).rec = new_rec;
+ +		*rec_chain = new_rec;
+-+/* 		INDEX_REC_IDXS(index, ptr) = rec;  */
+-+/* 		index->records[tbl_idx] = rec_idx;  */
+ +
+ +continue_scan:
+ +		; /* no op */
+-- 
+1.7.4.msysgit.0
+

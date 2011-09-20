@@ -1,0 +1,95 @@
+From 62b4d23912d4caee5df8d0dc987d70ecd6f87429 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:42:54 +0800
+Subject: [PATCH 019/130] shorten LINE_END macro calls
+
+---
+ guilt/gsoc-diff/teach-histogram |   21 +++++++++++----------
+ 1 files changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index 8a4b6b1..4ef6b80 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -77,10 +77,10 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..76abddb
++index 0000000..4239090
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+-@@ -0,0 +1,334 @@
++@@ -0,0 +1,335 @@
+ +#include "xinclude.h"
+ +#include "xtypes.h"
+ +#include "xdiff.h"
+@@ -101,7 +101,8 @@ index 0000000..76abddb
+ +	(((int) (r >> REC_PTR_SHIFT)) & REC_PTR_MASK)
+ +#define REC_CNT(a) (((int) a) & REC_CNT_MASK)
+ +
+-+#define LINE_END(s, c) (s+c-1)
+++#define LINE_END(n) (line##n+count##n-1)
+++#define LINE_END_PTR(n) (*line##n+*count##n-1)
+ +
+ +struct histindex {
+ +	int *table;
+@@ -157,7 +158,7 @@ index 0000000..76abddb
+ +	int new_cnt;
+ +	long rec;
+ +
+-+	for (ptr = LINE_END(line1, count1); line1 <= ptr; ptr--) {
+++	for (ptr = LINE_END(1); line1 <= ptr; ptr--) {
+ +		tbl_idx = table_hash(index, 1, ptr);
+ +
+ +		chain_len = 0;
+@@ -236,7 +237,7 @@ index 0000000..76abddb
+ +				if (1 < rc)
+ +					rc = XDL_MIN(rc, REC_CNT(index->recs[INDEX_REC_IDXS(index, as)]));
+ +			}
+-+			while (ae < LINE_END(line1, count1) && be < LINE_END(line2, count2)
+++			while (ae < LINE_END(1) && be < LINE_END(2)
+ +				&& cmp(index, 1, ae+1, 2, be+1)) {
+ +				if (1 < rc)
+ +					rc = XDL_MIN(rc, REC_CNT(index->recs[INDEX_REC_IDXS(index, ae)]));
+@@ -283,7 +284,7 @@ index 0000000..76abddb
+ +
+ +	index->cnt = index->max_chain_length + 1;
+ +
+-+	for (b_ptr = line2; b_ptr <= LINE_END(line2, count2); )
+++	for (b_ptr = line2; b_ptr <= LINE_END(2); )
+ +		b_ptr = try_lcs(index, lcs, b_ptr, line1, count1, line2, count2);
+ +
+ +	return index->has_common && index->max_chain_length < index->cnt;
+@@ -300,7 +301,7 @@ index 0000000..76abddb
+ +		(*line2)++;
+ +		(*count2)--;
+ +	}
+-+	while (*count1 > 1 && *count2 > 1 && cmp(index, 1, LINE_END(*line1, *count1), 2, LINE_END(*line2, *count2))) {
+++	while (*count1 > 1 && *count2 > 1 && cmp(index, 1, LINE_END_PTR(1), 2, LINE_END_PTR(2))) {
+ +		(*count1)--;
+ +		(*count2)--;
+ +	}
+@@ -342,7 +343,7 @@ index 0000000..76abddb
+ +
+ + 	reduce_common_start_end(&index, &line1, &count1, &line2, &count2);
+ +
+-+	if (LINE_END(line1, count1) >= MAX_PTR)
+++	if (LINE_END(1) >= MAX_PTR)
+ +		return -1;
+ +
+ +	index.table = NULL;
+@@ -392,8 +393,8 @@ index 0000000..76abddb
+ +				line1, lcs.begin1 - line1,
+ +				line2, lcs.begin2 - line2);
+ +			histogram_diff(file1, file2, xpp, env,
+-+				lcs.end1 + 1, LINE_END(line1, count1) - lcs.end1,
+-+				lcs.end2 + 1, LINE_END(line2, count2) - lcs.end2);
+++				lcs.end1 + 1, LINE_END(1) - lcs.end1,
+++				lcs.end2 + 1, LINE_END(2) - lcs.end2);
+ +		}
+ +	}
+ +
+-- 
+1.7.4.msysgit.0
+

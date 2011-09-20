@@ -1,0 +1,38 @@
+From e751c4a22c6b91d8b78cfed4202b5e0018835e85 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 22:12:42 +0800
+Subject: [PATCH 071/130] patch text
+
+---
+ guilt/gsoc-diff/skip-classify |   17 ++++++++---------
+ 1 files changed, 8 insertions(+), 9 deletions(-)
+
+diff --git a/guilt/gsoc-diff/skip-classify b/guilt/gsoc-diff/skip-classify
+index 8d36954..848655a 100644
+--- a/guilt/gsoc-diff/skip-classify
++++ b/guilt/gsoc-diff/skip-classify
+@@ -1,14 +1,13 @@
+ xdiff/xprepare: skip classification
+ 
+-xdl_classify_record() replaces the hash member (xrecord_t.ha) with a
+-unique identifier of the record/line, such that the hashes are
+-"linearized" (as Dscho calls it in xpatience.c). The records are then
+-placed into a hash table (xrecord_t.rhash).
++xdiff performs "classification" of records (xdl_classify_record()),
++replacing hashes (xrecord_t.ha) with a unique identifier of the
++record/line and building a hash table (xrecord_t.rhash) of records. This
++is then used to "cleanup" records (xdl_cleanup_records()).
+ 
+-We don't want that in histogram diff, so we omit calls to record
+-classification functions (that is, xdl_init_classifier() and
+-xdl_classify_record()). We also skip allocating memory to the hash
+-table, rhash, as it is no longer used.
++We don't need any of that in histogram diff, so we omit calls to these
++functions. We also skip allocating memory to the hash table, rhash, as
++it is no longer used.
+ 
+ This gives us a small boost in performance.
+ 
+-- 
+1.7.4.msysgit.0
+

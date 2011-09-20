@@ -1,0 +1,39 @@
+From dd05ada5c84f9aa163645bde98ec88bda2720a6c Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:43:07 +0800
+Subject: [PATCH 021/130] handle possible "null" case
+
+---
+ guilt/gsoc-diff/teach-histogram |    7 +++++--
+ 1 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index 3735c33..5cae7d2 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -95,10 +95,10 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..4239090
++index 0000000..5374ff1
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+-@@ -0,0 +1,335 @@
++@@ -0,0 +1,338 @@
+ +#include "xinclude.h"
+ +#include "xtypes.h"
+ +#include "xdiff.h"
+@@ -344,6 +344,9 @@ index 0000000..4239090
+ +	int sz;
+ +	int result = -1;
+ +
+++	if (count1 <= 0 && count2 <= 0)
+++		return 0;
+++
+ +	if (!count1) {
+ +		while(count2--)
+ +			env->xdf2.rchg[line2++ - 1] = 1;
+-- 
+1.7.4.msysgit.0
+

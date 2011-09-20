@@ -1,0 +1,68 @@
+From d189438eb658d1af9cb89838a9428e28236d81ca Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Mon, 1 Aug 2011 18:48:40 +0800
+Subject: [PATCH 083/130] import 0131a30
+
+---
+ guilt/gsoc-diff/fix-histogram-recurse |   41 +++++++++++++++++++++++++++++++++
+ guilt/gsoc-diff/series                |    1 +
+ 2 files changed, 42 insertions(+), 0 deletions(-)
+ create mode 100644 guilt/gsoc-diff/fix-histogram-recurse
+
+diff --git a/guilt/gsoc-diff/fix-histogram-recurse b/guilt/gsoc-diff/fix-histogram-recurse
+new file mode 100644
+index 0000000..d009812
+--- /dev/null
++++ b/guilt/gsoc-diff/fix-histogram-recurse
+@@ -0,0 +1,41 @@
++xdiff/xhistogram: rework handling of recursed results
++
++Previously we were over-complicating matters by trying to combine the
++recursed results. Now, terminate immediately if a recursive call failed
++and return its result.
++
++Signed-off-by: Tay Ray Chuan <rctay89@gmail.com>
++
++diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
++index 391333a..9cb69ea 100644
++--- a/xdiff/xhistogram.c
+++++ b/xdiff/xhistogram.c
++@@ -339,21 +339,22 @@ static int histogram_diff(xpparam_t const *xpp, xdfenv_t *env,
++ 	if (find_lcs(&index, &lcs, line1, count1, line2, count2))
++ 		result = fall_back_to_classic_diff(&index, line1, count1, line2, count2);
++ 	else {
++-		result = 0;
++ 		if (lcs.begin1 == 0 && lcs.begin2 == 0) {
++ 			int ptr;
++ 			for (ptr = 0; ptr < count1; ptr++)
++ 				env->xdf1.rchg[line1 + ptr - 1] = 1;
++ 			for (ptr = 0; ptr < count2; ptr++)
++ 				env->xdf2.rchg[line2 + ptr - 1] = 1;
+++			result = 0;
++ 		} else {
++-			result = histogram_diff(xpp, env,
+++			if (result = histogram_diff(xpp, env,
++ 				line1, lcs.begin1 - line1,
++-				line2, lcs.begin2 - line2);
++-			result = histogram_diff(xpp, env,
+++				line2, lcs.begin2 - line2))
+++				goto cleanup;
+++			if (result = histogram_diff(xpp, env,
++ 				lcs.end1 + 1, LINE_END(1) - lcs.end1,
++-				lcs.end2 + 1, LINE_END(2) - lcs.end2);
++-			result *= -1;
+++				lcs.end2 + 1, LINE_END(2) - lcs.end2))
+++				goto cleanup;
++ 		}
++ 	}
++ 
+diff --git a/guilt/gsoc-diff/series b/guilt/gsoc-diff/series
+index d68784f..813ef64 100644
+--- a/guilt/gsoc-diff/series
++++ b/guilt/gsoc-diff/series
+@@ -1 +1,2 @@
+ remove-mmfile_next
++fix-histogram-recurse
+-- 
+1.7.4.msysgit.0
+

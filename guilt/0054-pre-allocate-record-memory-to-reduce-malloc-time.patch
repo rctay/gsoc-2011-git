@@ -1,0 +1,68 @@
+From 96572ac31f111ed676c8446109b34af3aa933e11 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:48:14 +0800
+Subject: [PATCH 054/130] pre-allocate record memory to reduce malloc() time
+
+---
+ guilt/gsoc-diff/teach-histogram |   15 +++++++++++----
+ 1 files changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index f4dd489..bfdcdf3 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -95,10 +95,10 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..acb43d1
++index 0000000..4542d7f
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+-@@ -0,0 +1,325 @@
++@@ -0,0 +1,332 @@
+ +#include "xinclude.h"
+ +#include "xtypes.h"
+ +#include "xdiff.h"
+@@ -115,6 +115,7 @@ index 0000000..acb43d1
+ +		struct record *next;
+ +	} **records, /* an ocurrence */
+ +	  **line_map; /* map of line to record chain */
+++	chastore_t rcha;
+ +	unsigned int *next_ptrs;
+ +	unsigned int table_bits,
+ +		     records_size,
+@@ -193,8 +194,7 @@ index 0000000..acb43d1
+ +			return -1;
+ +
+ +		/* first occurrence, create occurrence chain */
+-+		if (!(rec = (struct record *)
+-+			xdl_malloc(sizeof(struct record))))
+++		if (!(rec = xdl_cha_alloc(&index->rcha)))
+ +			return -1;
+ +		rec->ptr = ptr;
+ +		rec->cnt = 1;
+@@ -375,6 +375,12 @@ index 0000000..acb43d1
+ +		goto cleanup;
+ +	memset(index.next_ptrs, 0, sz);
+ +
+++	/* so that xdl_cha_free() doesn't break */
+++	index.rcha.head = NULL;
+++	/* lines / 4 + 1 comes from xprepare.c:xdl_prepare_ctx() */
+++	if (!xdl_cha_init(&index.rcha, sizeof(struct record), count1 / 4 + 1))
+++		goto cleanup;
+++
+ +	index.ptr_shift = line1;
+ +	index.max_chain_length = 64;
+ +
+@@ -404,6 +410,7 @@ index 0000000..acb43d1
+ +	xdl_free(index.records);
+ +	xdl_free(index.line_map);
+ +	xdl_free(index.next_ptrs);
+++	xdl_cha_free(&index.rcha);
+ +
+ +	return result;
+ +}
+-- 
+1.7.4.msysgit.0
+

@@ -1,0 +1,25 @@
+From 1ef7619c9ba169a4d766ef21de12c6477ba83a6b Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:20:34 +0800
+Subject: [PATCH 013/130] add teach-histogram
+
+---
+ guilt/gsoc-diff/series          |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+ create mode 100644 guilt/gsoc-diff/teach-histogram
+
+diff --git a/guilt/gsoc-diff/series b/guilt/gsoc-diff/series
+index 24bdd52..dbf15ac 100644
+--- a/guilt/gsoc-diff/series
++++ b/guilt/gsoc-diff/series
+@@ -3,3 +3,4 @@ remove-mmfile_next
+ refactor-abort
+ refactor-fallback
+ refactor-tests
++teach-histogram
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+new file mode 100644
+index 0000000..e69de29
+-- 
+1.7.4.msysgit.0
+

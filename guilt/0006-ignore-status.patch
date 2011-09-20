@@ -1,0 +1,28 @@
+From b9efd32a3fff14377e67866c8a59e44893eb5bd3 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 20:33:24 +0800
+Subject: [PATCH 006/130] ignore status
+
+---
+ .gitignore             |    1 +
+ guilt/gsoc-diff/status |    1 -
+ 2 files changed, 1 insertions(+), 1 deletions(-)
+ delete mode 100644 guilt/gsoc-diff/status
+
+diff --git a/.gitignore b/.gitignore
+index b25c15b..48287f3 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -1 +1,2 @@
+ *~
++guilt/gsoc-diff/status
+diff --git a/guilt/gsoc-diff/status b/guilt/gsoc-diff/status
+deleted file mode 100644
+index 088703a..0000000
+--- a/guilt/gsoc-diff/status
++++ /dev/null
+@@ -1 +0,0 @@
+-use-memset
+-- 
+1.7.4.msysgit.0
+

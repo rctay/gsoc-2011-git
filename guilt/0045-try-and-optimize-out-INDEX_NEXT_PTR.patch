@@ -1,0 +1,59 @@
+From 1f66bd21f302e0b47c218a3db4ea32f2229c7d31 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:47:15 +0800
+Subject: [PATCH 045/130] try and optimize out INDEX_NEXT_PTR
+
+---
+ guilt/gsoc-diff/teach-histogram |   13 +++++++------
+ 1 files changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index 67ef31c..9870a32 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -95,10 +95,10 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..6fcf71b
++index 0000000..d24f666
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+-@@ -0,0 +1,329 @@
++@@ -0,0 +1,330 @@
+ +#include "xinclude.h"
+ +#include "xtypes.h"
+ +#include "xdiff.h"
+@@ -224,7 +224,7 @@ index 0000000..6fcf71b
+ +	int line1, int count1, int line2, int count2)
+ +{
+ +	unsigned int b_next = b_ptr + 1;
+-+	struct record *rec = index->records[table_hash(index, 2, b_ptr)];
+++	struct record *rec = index->records[table_hash(index, 2, b_ptr)], *rec_ahead;
+ +	unsigned int as, ae, bs, be, np, rc;
+ +	int should_break;
+ +
+@@ -242,7 +242,8 @@ index 0000000..6fcf71b
+ +		index->has_common = 1;
+ +		for (;;) {
+ +			should_break = 0;
+-+			np = INDEX_NEXT(index, as).ptr;
+++			rec_ahead = INDEX_NEXT(index, as).rec->next;
+++			np = rec_ahead ? rec_ahead->ptr : 0;
+ +			bs = b_ptr;
+ +			ae = as;
+ +			be = bs;
+@@ -277,8 +278,8 @@ index 0000000..6fcf71b
+ +				break;
+ +
+ +			while (np <= ae) {
+-+				np = INDEX_NEXT(index, np).ptr;
+-+				if (np == 0) {
+++				rec_ahead = rec_ahead->next;
+++				if (!rec_ahead || (np = rec_ahead->ptr) == 0) {
+ +					should_break = 1;
+ +					break;
+ +				}
+-- 
+1.7.4.msysgit.0
+

@@ -1,0 +1,26 @@
+From 1acb5c61e546b7bb3e0aed7ef46d0b83d4932c93 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 20:35:18 +0800
+Subject: [PATCH 008/130] add patch text
+
+---
+ guilt/gsoc-diff/remove-mmfile_next |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
+
+diff --git a/guilt/gsoc-diff/remove-mmfile_next b/guilt/gsoc-diff/remove-mmfile_next
+index 2311120..dd86182 100644
+--- a/guilt/gsoc-diff/remove-mmfile_next
++++ b/guilt/gsoc-diff/remove-mmfile_next
+@@ -1,3 +1,9 @@
++do away with xdl_mmfile_next()
++
++Given our simple mmfile structure, xdl_mmfile_next() calls are
++redundant. Do away with calls to them.
++
++Signed-off-by: Tay Ray Chuan <rctay89@gmail.com>
+ diff --git a/xdiff/xdiff.h b/xdiff/xdiff.h
+ index 711048e..6ea1d0e 100644
+ --- a/xdiff/xdiff.h
+-- 
+1.7.4.msysgit.0
+

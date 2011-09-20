@@ -1,0 +1,32 @@
+From 4764943b9102eda23cb9e69cfb72078bf268165c Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Mon, 1 Aug 2011 00:00:08 +0800
+Subject: [PATCH 107/130] fix top after refactor
+
+---
+ guilt/gsoc-diff/trim-ends |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/guilt/gsoc-diff/trim-ends b/guilt/gsoc-diff/trim-ends
+index 0ac9b38..2b129fc 100644
+--- a/guilt/gsoc-diff/trim-ends
++++ b/guilt/gsoc-diff/trim-ends
+@@ -1,5 +1,5 @@
+ diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
+-index 3ebad0f..c9d7d2f 100644
++index 3ebad0f..a93acc0 100644
+ --- a/xdiff/xprepare.c
+ +++ b/xdiff/xprepare.c
+ @@ -26,6 +26,7 @@
+@@ -89,7 +89,7 @@ index 3ebad0f..c9d7d2f 100644
+ +	long blk;
+ +	char const *p1 = mf1->ptr + mf1->size;
+ +	char const *p2 = mf2->ptr + mf2->size;
+-+	char const *cur, *top;
+++	char const *cur, *top = p1;
+ +
+ +	while (XDL_TRIM_BLK + trimmed <= smaller && !memcmp(p1 - XDL_TRIM_BLK, p2 - XDL_TRIM_BLK, XDL_TRIM_BLK)) {
+ +		trimmed += XDL_TRIM_BLK;
+-- 
+1.7.4.msysgit.0
+

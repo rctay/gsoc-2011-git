@@ -1,0 +1,45 @@
+From 3613a17f977ee20296a153e5a0666ddcb5d9c059 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:55:43 +0800
+Subject: [PATCH 076/130] fix handling of recursed results
+
+---
+ guilt/gsoc-diff/teach-histogram |    9 ++++-----
+ 1 files changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index 21507ab..acfb585 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -108,10 +108,10 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..cb4f3d3
++index 0000000..4af99f0
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+-@@ -0,0 +1,361 @@
++@@ -0,0 +1,360 @@
+ +/*
+ + * Copyright (C) 2010, Google Inc.
+ + * and other copyright owners as documented in JGit's IP log.
+@@ -444,13 +444,12 @@ index 0000000..cb4f3d3
+ +			for (ptr = 0; ptr < count2; ptr++)
+ +				env->xdf2.rchg[line2 + ptr - 1] = 1;
+ +		} else {
+-+			result = histogram_diff(xpp, env,
+++			result += histogram_diff(xpp, env,
+ +				line1, lcs.begin1 - line1,
+ +				line2, lcs.begin2 - line2);
+-+			result = histogram_diff(xpp, env,
+++			result += histogram_diff(xpp, env,
+ +				lcs.end1 + 1, LINE_END(1) - lcs.end1,
+ +				lcs.end2 + 1, LINE_END(2) - lcs.end2);
+-+			result *= -1;
+ +		}
+ +	}
+ +
+-- 
+1.7.4.msysgit.0
+

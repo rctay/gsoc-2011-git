@@ -1,0 +1,41 @@
+From 5b39658da132d8c0ee911e33851bd9ba94db2f3b Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:43:00 +0800
+Subject: [PATCH 020/130] add histogram test case
+
+---
+ guilt/gsoc-diff/teach-histogram |   18 ++++++++++++++++++
+ 1 files changed, 18 insertions(+), 0 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index 4ef6b80..3735c33 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -37,6 +37,24 @@ index 16c2dbe..3e8267b 100644
+  	else if (!strcmp(s, "ignore-space-change"))
+  		o->xdl_opts |= XDF_IGNORE_WHITESPACE_CHANGE;
+  	else if (!strcmp(s, "ignore-all-space"))
++diff --git a/t/t4048-diff-histogram.sh b/t/t4048-diff-histogram.sh
++new file mode 100755
++index 0000000..fd3e86a
++--- /dev/null
+++++ b/t/t4048-diff-histogram.sh
++@@ -0,0 +1,12 @@
+++#!/bin/sh
+++
+++test_description='histogram diff algorithm'
+++
+++. ./test-lib.sh
+++. "$TEST_DIRECTORY"/lib-diff-alternative.sh
+++
+++test_diff_frobnitz "histogram"
+++
+++test_diff_unique "histogram"
+++
+++test_done
+ diff --git a/xdiff/xdiff.h b/xdiff/xdiff.h
+ index 6ea1d0e..4beb10c 100644
+ --- a/xdiff/xdiff.h
+-- 
+1.7.4.msysgit.0
+

@@ -106,6 +106,12 @@ These patches were a naive, line-to-line conversion of JGit's histogram
 diff implementation. You can see that information is stored as an
 integer bitmask, with shifts being used to read/write different fields.
 
+## guilt
+
+Behind the scenes, I used [guilt] [guilt] to manage changes to my
+patches. The folder contains a dump of my .git/patches/ repo (also
+available in this repo at the [guilt/gsoc-diff branch] [guilt branch].
+
 # Related
 
 Towards the close of the gsoc coding period, there was [a thread] [1] on
@@ -115,3 +121,5 @@ gsoc, I managed to diagnose the problem and [submitted a patch] [2].
 
 [1]: http://mid.gmane.org/loom.20110809T093124-847@post.gmane.org
 [2]: http://mid.gmane.org/1313464312-5132-1-git-send-email-rctay89@gmail.com
+[guilt]: http://www.kernel.org/pub/linux/kernel/people/jsipek/guilt/
+[guilt branch]: https://github.com/rctay/gsoc-2011-git/tree/guilt/gsoc-diff

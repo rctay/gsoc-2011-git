@@ -1,0 +1,53 @@
+From 5952d7accb96a40ab7cbc6c20810761efc12446d Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:47:35 +0800
+Subject: [PATCH 049/130] remove unused member, ptr from record_next
+
+---
+ guilt/gsoc-diff/teach-histogram |    7 ++-----
+ 1 files changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index 968e285..03bbdac 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -95,10 +95,10 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..add844e
++index 0000000..04f5c1e
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+-@@ -0,0 +1,341 @@
++@@ -0,0 +1,338 @@
+ +#include "xinclude.h"
+ +#include "xtypes.h"
+ +#include "xdiff.h"
+@@ -118,7 +118,6 @@ index 0000000..add844e
+ +	unsigned int table_bits, records_size;
+ +
+ +	struct record_next {
+-+		unsigned int ptr;
+ +		struct record *rec;
+ +	} *records_next;
+ +	unsigned int records_next_size;
+@@ -190,7 +189,6 @@ index 0000000..add844e
+ +				new_rec->next = rec;
+ +				rec->previous = new_rec;
+ +				*rec_chain = new_rec;
+-+				INDEX_NEXT(index, ptr).ptr = rec->ptr;
+ +				INDEX_NEXT(index, ptr).rec = new_rec;
+ +				goto continue_scan;
+ +			}
+@@ -209,7 +207,6 @@ index 0000000..add844e
+ +		new_rec->ptr = ptr;
+ +		new_rec->cnt = 1;
+ +		new_rec->next = new_rec->previous = NULL;
+-+		INDEX_NEXT(index, ptr).ptr = 0;
+ +		INDEX_NEXT(index, ptr).rec = new_rec;
+ +		*rec_chain = new_rec;
+ +
+-- 
+1.7.4.msysgit.0
+

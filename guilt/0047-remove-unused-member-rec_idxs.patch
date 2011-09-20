@@ -1,0 +1,34 @@
+From ae65c0d8e596e0e0c7b430559dd81e92bcf85f1d Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:47:24 +0800
+Subject: [PATCH 047/130] remove unused member, rec_idxs
+
+---
+ guilt/gsoc-diff/teach-histogram |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index 652ad00..977c34e 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -95,7 +95,7 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..f8312fb
++index 0000000..df93e46
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+ @@ -0,0 +1,335 @@
+@@ -114,7 +114,7 @@ index 0000000..f8312fb
+ +	struct record {
+ +		unsigned int ptr, cnt;
+ +		struct record *next, *previous;
+-+	} **records, *rec_idxs;
+++	} **records;
+ +	unsigned int table_bits, records_size;
+ +
+ +	struct record_next {
+-- 
+1.7.4.msysgit.0
+

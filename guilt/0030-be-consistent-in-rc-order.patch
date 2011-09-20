@@ -1,0 +1,38 @@
+From 798120fc6d5b72c69214c49c35a2772440940192 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:45:19 +0800
+Subject: [PATCH 030/130] be consistent in rc order
+
+---
+ guilt/gsoc-diff/teach-histogram |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index 6049be9..b43d34e 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -95,7 +95,7 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..cb3edfb
++index 0000000..a754242
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+ @@ -0,0 +1,341 @@
+@@ -259,10 +259,10 @@ index 0000000..cb3edfb
+ +			}
+ +			while (ae < LINE_END(1) && be < LINE_END(2)
+ +				&& cmp(index, 1, ae+1, 2, be+1)) {
+-+				if (1 < rc)
+-+					rc = XDL_MIN(rc, REC_CNT(index->recs[INDEX_REC_IDXS(index, ae)]));
+ +				ae++;
+ +				be++;
+++				if (1 < rc)
+++					rc = XDL_MIN(rc, REC_CNT(index->recs[INDEX_REC_IDXS(index, ae)]));
+ +			}
+ +
+ +			if (b_next < be)
+-- 
+1.7.4.msysgit.0
+

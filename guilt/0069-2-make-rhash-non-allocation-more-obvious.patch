@@ -1,0 +1,81 @@
+From 3c2f260c701d4314caf173b8571a04b02ccbf867 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 22:09:59 +0800
+Subject: [PATCH 069/130] =?UTF-8?q?=1B[2~make=20rhash=20non-allocation=20more=20obvious?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ guilt/gsoc-diff/skip-classify |   30 +++++++++++++++++++++---------
+ 1 files changed, 21 insertions(+), 9 deletions(-)
+
+diff --git a/guilt/gsoc-diff/skip-classify b/guilt/gsoc-diff/skip-classify
+index 371d153..33aca1b 100644
+--- a/guilt/gsoc-diff/skip-classify
++++ b/guilt/gsoc-diff/skip-classify
+@@ -10,7 +10,7 @@ This gives us a small boost in performance.
+ 
+ Signed-off-by: Tay Ray Chuan <rctay89@gmail.com>
+ diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
+-index 3ebad0f..98861ff 100644
++index 3ebad0f..8dea5ab 100644
+ --- a/xdiff/xprepare.c
+ +++ b/xdiff/xprepare.c
+ @@ -51,7 +51,7 @@ typedef struct s_xdlclassifier {
+@@ -41,16 +41,28 @@ index 3ebad0f..98861ff 100644
+  
+  	hi = (long) XDL_HASHLONG(rec->ha, hbits);
+  	rec->next = rhash[hi];
+-@@ -154,7 +155,7 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
++@@ -154,11 +155,15 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+  	if (!(recs = (xrecord_t **) xdl_malloc(narec * sizeof(xrecord_t *))))
+  		goto abort;
+  
+ -	hbits = xdl_hashbits((unsigned int) narec);
+-+	hbits = !(xpp->flags & XDF_HISTOGRAM_DIFF) ? xdl_hashbits((unsigned int) narec) : 0;
+- 	hsize = 1 << hbits;
+- 	if (!(rhash = (xrecord_t **) xdl_malloc(hsize * sizeof(xrecord_t *))))
+- 		goto abort;
+-@@ -178,7 +179,8 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
++-	hsize = 1 << hbits;
++-	if (!(rhash = (xrecord_t **) xdl_malloc(hsize * sizeof(xrecord_t *))))
++-		goto abort;
++-	memset(rhash, 0, hsize * sizeof(xrecord_t *));
+++	if (xpp->flags & XDF_HISTOGRAM_DIFF)
+++		hbits = hsize = 0;
+++	else {
+++		hbits = xdl_hashbits((unsigned int) narec);
+++		hsize = 1 << hbits;
+++		if (!(rhash = (xrecord_t **) xdl_malloc(hsize * sizeof(xrecord_t *))))
+++			goto abort;
+++		memset(rhash, 0, hsize * sizeof(xrecord_t *));
+++	}
++ 
++ 	nrec = 0;
++ 	if ((cur = blk = xdl_mmfile_first(mf, &bsize)) != NULL) {
++@@ -178,7 +183,8 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+  			crec->ha = hav;
+  			recs[nrec++] = crec;
+  
+@@ -60,7 +72,7 @@ index 3ebad0f..98861ff 100644
+  				goto abort;
+  		}
+  	}
+-@@ -235,7 +237,8 @@ int xdl_prepare_env(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
++@@ -235,7 +241,8 @@ int xdl_prepare_env(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
+  	enl1 = xdl_guess_lines(mf1) + 1;
+  	enl2 = xdl_guess_lines(mf2) + 1;
+  
+@@ -70,7 +82,7 @@ index 3ebad0f..98861ff 100644
+  
+  		return -1;
+  	}
+-@@ -252,9 +255,10 @@ int xdl_prepare_env(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
++@@ -252,9 +259,10 @@ int xdl_prepare_env(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
+  		return -1;
+  	}
+  
+-- 
+1.7.4.msysgit.0
+

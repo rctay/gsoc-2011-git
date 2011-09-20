@@ -1,0 +1,66 @@
+From 94a22f3586be1f19cd8ffd38f57d88b34bcfc5a7 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:41:06 +0800
+Subject: [PATCH 015/130] implement fallback
+
+---
+ guilt/gsoc-diff/teach-histogram |   19 ++++++++++++++-----
+ 1 files changed, 14 insertions(+), 5 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index 3ce915e..bcb3525 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -77,10 +77,10 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..adea72f
++index 0000000..5b18f6e
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+-@@ -0,0 +1,354 @@
++@@ -0,0 +1,363 @@
+ +#include "xinclude.h"
+ +#include "xtypes.h"
+ +#include "xdiff.h"
+@@ -335,6 +335,16 @@ index 0000000..adea72f
+ +	}
+ +}
+ +
+++static int fall_back_to_classic_diff(struct histindex *index,
+++		int line1, int count1, int line2, int count2)
+++{
+++	xpparam_t xpp;
+++	xpp.flags = index->xpp->flags & ~XDF_HISTOGRAM_DIFF;
+++
+++	return xdl_fall_back_diff(index->env, &xpp,
+++				  line1, count1, line2, count2);
+++}
+++
+ +static int histogram_diff(mmfile_t *file1, mmfile_t *file2,
+ +	xpparam_t const *xpp, xdfenv_t *env,
+ +	int line1, int count1, int line2, int count2)
+@@ -397,8 +407,9 @@ index 0000000..adea72f
+ +
+ +	memset(&lcs, 0, sizeof(lcs));
+ +	if (find_lcs(&index, &lcs, line1, count1, line2, count2))
+-+		; /* TODO */
+++		result = fall_back_to_classic_diff(&index, line1, count1, line2, count2);
+ +	else {
+++		result = 0;
+ +		if (region_type(&lcs) == LCS_EMPTY) {
+ +			int ptr;
+ +			for (ptr = 0; ptr < count1; ptr++)
+@@ -415,8 +426,6 @@ index 0000000..adea72f
+ +		}
+ +	}
+ +
+-+	result = 0;
+-+
+ +cleanup:
+ +	xdl_free(index.table);
+ +	xdl_free(index.recs);
+-- 
+1.7.4.msysgit.0
+

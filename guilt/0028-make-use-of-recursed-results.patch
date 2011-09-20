@@ -1,0 +1,45 @@
+From 149f4791dec11d5a6db3cc58a9f0d726d63fbfaf Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:45:04 +0800
+Subject: [PATCH 028/130] make use of recursed results
+
+---
+ guilt/gsoc-diff/teach-histogram |    9 +++++----
+ 1 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index c709c4f..a1872cf 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -95,10 +95,10 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..f6cbbd4
++index 0000000..cdeae6d
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+-@@ -0,0 +1,340 @@
++@@ -0,0 +1,341 @@
+ +#include "xinclude.h"
+ +#include "xtypes.h"
+ +#include "xdiff.h"
+@@ -412,12 +412,13 @@ index 0000000..f6cbbd4
+ +			for (ptr = 0; ptr < count2; ptr++)
+ +				env->xdf2.rchg[line2 + ptr - 1] = 1;
+ +		} else {
+-+			histogram_diff(file1, file2, xpp, env,
+++			result = histogram_diff(file1, file2, xpp, env,
+ +				line1, lcs.begin1 - line1,
+ +				line2, lcs.begin2 - line2);
+-+			histogram_diff(file1, file2, xpp, env,
+++			result = histogram_diff(file1, file2, xpp, env,
+ +				lcs.end1 + 1, LINE_END(1) - lcs.end1,
+ +				lcs.end2 + 1, LINE_END(2) - lcs.end2);
+++			result *= -1;
+ +		}
+ +	}
+ +
+-- 
+1.7.4.msysgit.0
+

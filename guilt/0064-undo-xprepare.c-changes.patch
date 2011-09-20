@@ -1,0 +1,70 @@
+From 2b3405a4430425771a7aafd8a29d8246afa6ef98 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:53:32 +0800
+Subject: [PATCH 064/130] undo xprepare.c changes
+
+---
+ guilt/gsoc-diff/teach-histogram |   50 ---------------------------------------
+ 1 files changed, 0 insertions(+), 50 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index f0bd729..aa76fc6 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -496,53 +496,3 @@ index 0000000..391333a
+ +
+ +	return histogram_diff(xpp, env, line1, count1, line2, count2);
+ +}
+-diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
+-index 3ebad0f..0616359 100644
+---- a/xdiff/xprepare.c
+-+++ b/xdiff/xprepare.c
+-@@ -51,7 +51,7 @@ typedef struct s_xdlclassifier {
+- static int xdl_init_classifier(xdlclassifier_t *cf, long size, long flags);
+- static void xdl_free_classifier(xdlclassifier_t *cf);
+- static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned int hbits,
+--			       xrecord_t *rec);
+-+			       xrecord_t *rec, xpparam_t const *xpp);
+- static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+- 			   xdlclassifier_t *cf, xdfile_t *xdf);
+- static void xdl_free_ctx(xdfile_t *xdf);
+-@@ -94,7 +94,7 @@ static void xdl_free_classifier(xdlclassifier_t *cf) {
+- 
+- 
+- static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned int hbits,
+--			       xrecord_t *rec) {
+-+			       xrecord_t *rec, xpparam_t const *xpp) {
+- 	long hi;
+- 	char const *line;
+- 	xdlclass_t *rcrec;
+-@@ -120,7 +120,8 @@ static int xdl_classify_record(xdlclassifier_t *cf, xrecord_t **rhash, unsigned
+- 		cf->rchash[hi] = rcrec;
+- 	}
+- 
+--	rec->ha = (unsigned long) rcrec->idx;
+-+	if (!(xpp->flags & XDF_HISTOGRAM_DIFF))
+-+		rec->ha = (unsigned long) rcrec->idx;
+- 
+- 	hi = (long) XDL_HASHLONG(rec->ha, hbits);
+- 	rec->next = rhash[hi];
+-@@ -178,7 +179,7 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+- 			crec->ha = hav;
+- 			recs[nrec++] = crec;
+- 
+--			if (xdl_classify_record(cf, rhash, hbits, crec) < 0)
+-+			if (xdl_classify_record(cf, rhash, hbits, crec, xpp) < 0)
+- 				goto abort;
+- 		}
+- 	}
+-@@ -254,7 +255,7 @@ int xdl_prepare_env(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
+- 
+- 	xdl_free_classifier(&cf);
+- 
+--	if (!(xpp->flags & XDF_PATIENCE_DIFF) &&
+-+	if (!(xpp->flags & XDF_HISTOGRAM_DIFF) &&
+- 			xdl_optimize_ctxs(&xe->xdf1, &xe->xdf2) < 0) {
+- 
+- 		xdl_free_ctx(&xe->xdf2);
+-- 
+1.7.4.msysgit.0
+

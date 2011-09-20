@@ -1,0 +1,34 @@
+From d0657c5fd59c4c3ba1b071744c3a8da5e66b897c Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:48:05 +0800
+Subject: [PATCH 052/130] scanA: fix orphaning of chains
+
+---
+ guilt/gsoc-diff/teach-histogram |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index 23f7348..99b5ae2 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -95,7 +95,7 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..c9fd76e
++index 0000000..53fe4cc
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+ @@ -0,0 +1,333 @@
+@@ -201,7 +201,7 @@ index 0000000..c9fd76e
+ +			return -1;
+ +		new_rec->ptr = ptr;
+ +		new_rec->cnt = 1;
+-+		new_rec->next = NULL;
+++		new_rec->next = *rec_chain;
+ +		LINE_MAP(index, ptr) = new_rec;
+ +		*rec_chain = new_rec;
+ +
+-- 
+1.7.4.msysgit.0
+

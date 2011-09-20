@@ -1,0 +1,64 @@
+From b79681c2bf56688a2cad2ef383e07d513169d0b8 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:42:37 +0800
+Subject: [PATCH 017/130] remove region_type
+
+---
+ guilt/gsoc-diff/teach-histogram |   25 +++----------------------
+ 1 files changed, 3 insertions(+), 22 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index dc192da..39cf7bd 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -77,10 +77,10 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..b6d7b83
++index 0000000..53fc76f
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+-@@ -0,0 +1,353 @@
++@@ -0,0 +1,334 @@
+ +#include "xinclude.h"
+ +#include "xtypes.h"
+ +#include "xdiff.h"
+@@ -128,25 +128,6 @@ index 0000000..b6d7b83
+ +	int begin2, end2;
+ +};
+ +
+-+#define LCS_REPLACE	1
+-+#define LCS_DELETE	2
+-+#define LCS_INSERT		3
+-+#define LCS_EMPTY		4
+-+
+-+static int region_type(struct region *lcs)
+-+{
+-+	if (lcs->begin1 < lcs->end1)
+-+		if (lcs->begin2 < lcs->end2)
+-+			return LCS_REPLACE;
+-+		else
+-+			return LCS_DELETE;
+-+	else
+-+		if (lcs->begin2 < lcs->end2)
+-+			return LCS_INSERT;
+-+		else
+-+			return LCS_EMPTY;
+-+}
+-+
+ +#define INDEX_NEXT(i, a) (i->next[(a) - i->ptr_shift])
+ +#define INDEX_REC_IDXS(i, a) (i->rec_idxs[(a) - i->ptr_shift])
+ +
+@@ -400,7 +381,7 @@ index 0000000..b6d7b83
+ +		result = fall_back_to_classic_diff(&index, line1, count1, line2, count2);
+ +	else {
+ +		result = 0;
+-+		if (region_type(&lcs) == LCS_EMPTY) {
+++		if (lcs.begin1 == lcs.end1 && lcs.begin2 == lcs.end2) {
+ +			int ptr;
+ +			for (ptr = 0; ptr < count1; ptr++)
+ +				env->xdf1.rchg[line1 + ptr - 1] = 1;
+-- 
+1.7.4.msysgit.0
+

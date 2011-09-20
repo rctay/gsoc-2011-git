@@ -1,0 +1,48 @@
+From 13476a3b4c4760a2a4f88243fdacdd17b61885cc Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 22:52:40 +0800
+Subject: [PATCH 077/130] ensure that we don't touch rhash (via xdl_cleanup_records())
+
+---
+ guilt/gsoc-diff/skip-classify |   14 ++++++++++----
+ 1 files changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/guilt/gsoc-diff/skip-classify b/guilt/gsoc-diff/skip-classify
+index 3fc2ab4..da00559 100644
+--- a/guilt/gsoc-diff/skip-classify
++++ b/guilt/gsoc-diff/skip-classify
+@@ -13,7 +13,7 @@ This gives us a small boost in performance.
+ 
+ Signed-off-by: Tay Ray Chuan <rctay89@gmail.com>
+ diff --git a/xdiff/xprepare.c b/xdiff/xprepare.c
+-index 3ebad0f..9d7a05a 100644
++index 3ebad0f..c139ba8 100644
+ --- a/xdiff/xprepare.c
+ +++ b/xdiff/xprepare.c
+ @@ -154,11 +154,15 @@ static int xdl_prepare_ctx(mmfile_t *mf, long narec, xpparam_t const *xpp,
+@@ -57,7 +57,7 @@ index 3ebad0f..9d7a05a 100644
+  
+  		return -1;
+  	}
+-@@ -252,7 +258,8 @@ int xdl_prepare_env(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
++@@ -252,10 +258,12 @@ int xdl_prepare_env(mmfile_t *mf1, mmfile_t *mf2, xpparam_t const *xpp,
+  		return -1;
+  	}
+  
+@@ -65,5 +65,11 @@ index 3ebad0f..9d7a05a 100644
+ +	if (!(xpp->flags & XDF_HISTOGRAM_DIFF))
+ +		xdl_free_classifier(&cf);
+  
+- 	if (!(xpp->flags & XDF_PATIENCE_DIFF) &&
+- 			xdl_optimize_ctxs(&xe->xdf1, &xe->xdf2) < 0) {
++-	if (!(xpp->flags & XDF_PATIENCE_DIFF) &&
++-			xdl_optimize_ctxs(&xe->xdf1, &xe->xdf2) < 0) {
+++	if ((xpp->flags & XDF_HISTOGRAM_DIFF) ?
+++		xdl_trim_ends(&xe->xdf1, &xe->xdf2) < 0
+++		: (!(xpp->flags & XDF_PATIENCE_DIFF) && xdl_optimize_ctxs(&xe->xdf1, &xe->xdf2) < 0)) {
++ 
++ 		xdl_free_ctx(&xe->xdf2);
++ 		xdl_free_ctx(&xe->xdf1);
+-- 
+1.7.4.msysgit.0
+

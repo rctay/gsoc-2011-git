@@ -1,0 +1,53 @@
+From a497f3c7df21eaa17e078bdb1dadc6f2ffcaa77d Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 21:46:49 +0800
+Subject: [PATCH 041/130] set NULL
+
+---
+ guilt/gsoc-diff/teach-histogram |   10 ++++++----
+ 1 files changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/guilt/gsoc-diff/teach-histogram b/guilt/gsoc-diff/teach-histogram
+index 1070c8a..c0bce69 100644
+--- a/guilt/gsoc-diff/teach-histogram
++++ b/guilt/gsoc-diff/teach-histogram
+@@ -95,16 +95,16 @@ index ad033a8..7a92ea9 100644
+  #endif /* #if !defined(XDIFFI_H) */
+ diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+ new file mode 100644
+-index 0000000..2249e50
++index 0000000..d92c688
+ --- /dev/null
+ +++ b/xdiff/xhistogram.c
+-@@ -0,0 +1,334 @@
++@@ -0,0 +1,336 @@
+ +#include "xinclude.h"
+ +#include "xtypes.h"
+ +#include "xdiff.h"
+ +
+-+#define MAX_PTR		(sizeof(unsigned int))
+-+#define MAX_CNT		(sizeof(unsigned int))
+++#define MAX_PTR	((1<<15)-1)
+++#define MAX_CNT	((1<<15)-1)
+ +
+ +#define LINE_END(n) (line##n+count##n-1)
+ +#define LINE_END_PTR(n) (*line##n+*count##n-1)
+@@ -187,6 +187,7 @@ index 0000000..2249e50
+ +					new_cnt = MAX_CNT;
+ +				new_rec->cnt = new_cnt;
+ +
+++				new_rec->previous = NULL;
+ +				new_rec->next = rec;
+ +				rec->previous = new_rec;
+ +				*rec_chain = new_rec;
+@@ -212,6 +213,7 @@ index 0000000..2249e50
+ +			return -1;
+ +		new_rec->ptr = ptr;
+ +		new_rec->cnt = 1;
+++		new_rec->next = new_rec->previous = NULL;
+ +		INDEX_NEXT(index, ptr).ptr = 0;
+ +		INDEX_NEXT(index, ptr).rec = new_rec;
+ +		*rec_chain = new_rec;
+-- 
+1.7.4.msysgit.0
+

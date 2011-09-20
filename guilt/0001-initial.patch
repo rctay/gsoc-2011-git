@@ -1,0 +1,19 @@
+From 11fb89a9a967850f19a8c314d74b23141c01c0e7 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Sun, 31 Jul 2011 20:05:53 +0800
+Subject: [PATCH 001/130] initial
+
+---
+ 0 files changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 guilt/gsoc-diff/series
+ create mode 100644 guilt/gsoc-diff/status
+
+diff --git a/guilt/gsoc-diff/series b/guilt/gsoc-diff/series
+new file mode 100644
+index 0000000..e69de29
+diff --git a/guilt/gsoc-diff/status b/guilt/gsoc-diff/status
+new file mode 100644
+index 0000000..e69de29
+-- 
+1.7.4.msysgit.0
+
