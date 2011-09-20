@@ -1,0 +1,65 @@
+$ time ~/bin/jgit.sh log -M -p v1.5.0 >/dev/null
+0m12.505s
+0m12.528s
+0m12.734s
+
+$ time ../git/git log -M -p v1.5.0 >/dev/null
+0m7.252s
+0m7.229s
+0m7.268s
+
+--assume-text
+0m7.149s
+0m7.134s
+0m7.174s
+
+$ time ../git/git log --histogram -M -p v1.5.0 >/dev/null
+raw-v4
+0m7.874s
+0m7.883s
+0m7.835s
+
+raw 1683281
+0m6.809s
+0m6.776s
+0m6.799s
+
+raw with golden ratio hash
+0m6.773s
+0m6.806s
+0m6.808s
+
+raw with less malloc
+0m6.792s
+0m6.793s
+0m6.805s
+
+ptr-v3
+0m7.732s
+0m7.878s
+0m7.888s
+
+ptr d5b2c8f
+0m6.858s
+0m6.874s
+0m6.866s
+
+ptr w skip 1
+0m6.881s
+0m6.820s
+0m6.902s
+
+xd-v1
+0m8.055s
+0m8.053s
+0m8.095s
+
+xd-v2
+0m8.081s
+0m8.103s
+0m8.084s
+
+$ time ../git/git log --patience -M -p v1.5.0 >/dev/null
+0m8.428s
+0m8.403s
+0m8.431s
