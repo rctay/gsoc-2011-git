@@ -1,0 +1,31 @@
+From 6d3486ad1cb4e0e0e1d10a64a360450e2f602f39 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Wed, 29 Jun 2011 21:08:33 +0800
+Subject: [PATCH 12/15] add histogram test case
+
+---
+ t/t4048-diff-histogram.sh |   12 ++++++++++++
+ 1 files changed, 12 insertions(+), 0 deletions(-)
+ create mode 100755 t/t4048-diff-histogram.sh
+
+diff --git a/t/t4048-diff-histogram.sh b/t/t4048-diff-histogram.sh
+new file mode 100755
+index 0000000..24d7331
+--- /dev/null
++++ b/t/t4048-diff-histogram.sh
+@@ -0,0 +1,12 @@
++#!/bin/sh
++
++test_description='histogram diff algorithm'
++
++. ./test-lib.sh
++. "$TEST_DIRECTORY"/lib-diff-patience.sh
++
++test_diff_frobnitz "histogram"
++
++test_diff_unique "histogram"
++
++test_done
+-- 
+1.7.6.12.g6486a.dirty
+

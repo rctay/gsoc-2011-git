@@ -1,0 +1,73 @@
+From 24cdbc6c8866ddb032b2aa19d5e747ff6979b4a0 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Mon, 20 Jun 2011 10:30:37 +0800
+Subject: [PATCH 02/28] xdiff/xutils: add hash table helpers
+
+---
+ xdiff/xutils.c |   35 +++++++++++++++++++++++++++++++++++
+ xdiff/xutils.h |    6 ++++++
+ 2 files changed, 41 insertions(+), 0 deletions(-)
+
+diff --git a/xdiff/xutils.c b/xdiff/xutils.c
+index ded7c32..4107416 100644
+--- a/xdiff/xutils.c
++++ b/xdiff/xutils.c
+@@ -433,3 +433,38 @@ int xdl_fall_back_diff(xdfenv_t *diff_env, xpparam_t const *xpp,
+ 
+ 	return 0;
+ }
++
++/*
++ * From http://en.wikipedia.org/wiki/Binary_logarithm#Integer
++ */
++static int int_log2(unsigned int n)
++{
++	int pos;
++
++	if (n == 0)
++		return -1;
++
++
++	pos = 0;
++	if (n >= (1 <<16)) { n >>= 16; pos += 16; }
++	if (n >= (1 << 8)) { n >>=  8; pos +=  8; }
++	if (n >= (1 << 4)) { n >>=  4; pos +=  4; }
++	if (n >= (1 << 2)) { n >>=  2; pos +=  2; }
++	if (n >= (1 << 1)) {           pos +=  1; }
++	return pos;
++}
++
++int xdl_table_bits(unsigned int size)
++{
++	int bits = int_log2(size);
++	if (bits == 0)
++		bits = 1;
++	if (1 << bits < size)
++		bits++;
++	return bits;
++}
++
++unsigned int xdl_table_key(unsigned long val, unsigned int key_shift)
++{
++	return ((unsigned int) (val * 0x9e370001UL)) >> key_shift;
++}
+diff --git a/xdiff/xutils.h b/xdiff/xutils.h
+index 674a657..f2d4db3 100644
+--- a/xdiff/xutils.h
++++ b/xdiff/xutils.h
+@@ -44,6 +44,12 @@ int xdl_emit_hunk_hdr(long s1, long c1, long s2, long c2,
+ int xdl_fall_back_diff(xdfenv_t *diff_env, xpparam_t const *xpp,
+ 		       int line1, int count1, int line2, int count2);
+ 
++/* hash table - helpers to implement one */
++int xdl_table_bits(unsigned int size);
++unsigned int xdl_table_key(unsigned long val, unsigned int key_shift);
++
++#define xdl_table_size(tb) (1 << tb)
++#define xdl_table_key_shift(tb) (32 - tb)
+ 
+ 
+ #endif /* #if !defined(XUTILS_H) */
+-- 
+1.7.6.12.g6486a.dirty
+

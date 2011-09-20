@@ -1,0 +1,25 @@
+From 2f9ef87eb35ce9519b3599359f32c2cf54977f68 Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Thu, 30 Jun 2011 12:17:14 +0800
+Subject: [PATCH 18/23] MAX_CNT: reuse value
+
+---
+ xdiff/xhistogram.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index 621a41e..cb57a68 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -7,7 +7,7 @@
+ #define REC_PTR_MASK	((1 << 28) - 1)
+ #define REC_CNT_MASK	((1 << 8) - 1)
+ #define MAX_PTR		REC_PTR_MASK
+-#define MAX_CNT		(1 << 8) - 1
++#define MAX_CNT		REC_CNT_MASK
+ 
+ #define REC_CREATE(n, p, c) \
+ 	(((unsigned long) n << REC_NEXT_SHIFT) \
+-- 
+1.7.6.12.g6486a.dirty
+

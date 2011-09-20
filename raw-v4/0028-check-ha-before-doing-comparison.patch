@@ -1,0 +1,26 @@
+From 245fdd85501753d9e9c5f836808b64814b23402b Mon Sep 17 00:00:00 2001
+From: Tay Ray Chuan <rctay89@gmail.com>
+Date: Mon, 4 Jul 2011 19:12:01 +0800
+Subject: [PATCH 28/28] check ha before doing comparison
+
+---
+ xdiff/xhistogram.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/xdiff/xhistogram.c b/xdiff/xhistogram.c
+index f487575..3a9b6ae 100644
+--- a/xdiff/xhistogram.c
++++ b/xdiff/xhistogram.c
+@@ -57,7 +57,8 @@ static int cmp_env(xpparam_t const *xpp, xdfenv_t *env,
+ {
+ 	xrecord_t *r1 = get_rec(env, side1, line1),
+ 		  *r2 = get_rec(env, side2, line2);
+-	return xdl_recmatch(r1->ptr, r1->size, r2->ptr, r2->size,
++	return r1->ha == r2->ha &&
++		xdl_recmatch(r1->ptr, r1->size, r2->ptr, r2->size,
+ 			    xpp->flags);
+ }
+ 
+-- 
+1.7.6.12.g6486a.dirty
+

@@ -98,6 +98,14 @@ series was sent in to make the maintainer's life easier.
 * 0003-xdiff-xhistogram-rely-on-xdl_trim_ends.patch
 * 0004-xdiff-xhistogram-drop-need-for-additional-variable.patch
 
+# Un-mailed patches
+
+## raw-v*
+
+These patches were a naive, line-to-line conversion of JGit's histogram
+diff implementation. You can see that information is stored as an
+integer bitmask, with shifts being used to read/write different fields.
+
 # Related
 
 Towards the close of the gsoc coding period, there was [a thread] [1] on
